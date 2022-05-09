@@ -1,5 +1,0 @@
-#- make renaming / moving experiments work
-#- remove cahcew raw
-#- create tmp dir
-#- add README.md
-#- remove turboboost deactivation
