@@ -1,0 +1,14 @@
+eval:
+ eval_file_pattern: '/training-data/coco/val-*'
+# eval_file_pattern: '/training-data/coco/coco_val.record-*'
+ batch_size: 1
+ val_json_file: '/training-data/coco/raw-data/annotations/instances_val2017.json'
+architecture:
+ use_bfloat16: False
+train:
+# total_steps: 1000
+# batch_size: 1
+ total_steps: 90000
+ batch_size: 12
+ train_file_pattern: '/training-data/coco/train-*'
+use_tpu: False

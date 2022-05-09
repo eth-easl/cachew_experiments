@@ -1,0 +1,4 @@
+replicaset.apps/data-service-dispatcher created
+replicaset.apps/data-service-worker-0 created
+replicaset.apps/data-service-worker-1 created
+replicaset.apps/data-service-worker-2 created

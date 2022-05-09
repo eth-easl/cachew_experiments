@@ -1,0 +1,131 @@
+apiVersion: kops.k8s.io/v1alpha2
+kind: Cluster
+metadata:
+  creationTimestamp: "2020-10-06T11:07:00Z"
+  name: {{ nethz }}-tfdata-service.k8s.local
+spec:
+  api:
+    loadBalancer:
+      type: Public
+  authorization:
+    rbac: {}
+  channel: stable
+  cloudConfig:
+    gceServiceAccount: default
+  cloudProvider: gce
+  containerRuntime: docker
+  etcdClusters:
+  - cpuRequest: 200m
+    etcdMembers:
+    - instanceGroup: {{ nethz }}-master-{{ zone }}
+      name: a
+    memoryRequest: 100Mi
+    name: main
+  - cpuRequest: 100m
+    etcdMembers:
+    - instanceGroup: {{ nethz }}-master-{{ zone }}
+      name: a
+    memoryRequest: 100Mi
+    name: events
+  iam:
+    allowContainerRegistry: true
+    legacy: false
+  kubelet:
+    anonymousAuth: false
+  kubernetesApiAccess:
+  - 0.0.0.0/0
+  kubernetesVersion: 1.18.9
+  masterPublicName: api.{{ nethz }}-tfdata-service.k8s.local
+  networking:
+    weave: {}
+  nonMasqueradeCIDR: 100.64.0.0/10
+  project: tfdata-service
+  sshAccess:
+  - 0.0.0.0/0
+  subnets:
+  - name: {{ region }}
+    region: {{ region }}
+    type: Public
+  topology:
+    dns:
+      type: Public
+    masters: public
+    nodes: public
+
+---
+
+apiVersion: kops.k8s.io/v1alpha2
+kind: InstanceGroup
+metadata:
+  creationTimestamp: "2020-10-06T11:07:02Z"
+  generation: 1
+  labels:
+    kops.k8s.io/cluster: {{ nethz }}-tfdata-service.k8s.local
+  name: {{ nethz }}-master-{{ zone }}
+spec:
+  image: ubuntu-os-cloud/ubuntu-1804-bionic-v20201211a
+  machineType: n2-standard-4
+  maxSize: 1
+  minSize: 1
+  nodeLabels:
+    cloud.google.com/metadata-proxy-ready: "true"
+    kops.k8s.io/instancegroup: {{ nethz }}-master-{{ zone }}
+  role: Master
+  subnets:
+  - {{ region }}
+  zones:
+  - {{ zone }}
+
+---
+
+apiVersion: kops.k8s.io/v1alpha2
+kind: InstanceGroup
+metadata:
+  creationTimestamp: "2020-10-06T11:07:03Z"
+  labels:
+    kops.k8s.io/cluster: {{ nethz }}-tfdata-service.k8s.local
+  name: {{ nethz }}-nodes
+spec:
+  image: tfdata-service/kubernetes-node-glusterfs-enabled
+  machineType: n2-standard-8
+  rootVolumeSize: 100
+  rootVolumeType: pd-ssd
+  maxSize: {{ num_nodes }}
+  minSize: {{ num_nodes }}
+  nodeLabels:
+    cloud.google.com/metadata-proxy-ready: "true"
+    kops.k8s.io/instancegroup: {{ nethz }}-nodes
+    cachew.role: worker
+  role: Node
+  subnets:
+  - {{ region }}
+  zones:
+  - {{ zone }}
+
+
+---
+
+apiVersion: kops.k8s.io/v1alpha2
+kind: InstanceGroup
+metadata:
+  creationTimestamp: "2020-10-06T11:07:03Z"
+  labels:
+    kops.k8s.io/cluster: {{ nethz }}-tfdata-service.k8s.local
+  name: {{ nethz }}-cachew-dispatcher
+spec:
+  image: tfdata-service/kubernetes-node-glusterfs-enabled
+  machineType: n2-standard-16
+  rootVolumeSize: 100
+  rootVolumeType: pd-ssd
+  maxSize: 1
+  minSize: 1
+  nodeLabels:
+    cloud.google.com/metadata-proxy-ready: "true"
+    kops.k8s.io/instancegroup: {{ nethz }}-cachew-dispatcher
+    cachew.role: dispatcher
+  role: Node
+  subnets:
+  - {{ region }}
+  zones:
+  - {{ zone }}
+
