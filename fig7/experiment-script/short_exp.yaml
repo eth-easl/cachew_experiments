@@ -1,0 +1,68 @@
+experiment:
+  meta:
+    name: "caching_decision_inflate_2.5_b900_redo"
+    path_to_log: /home/dkluser/managecluster/experiment_out
+    gluster_conf:
+    kubernetes:
+      dispatcher: "n2-16"
+      worker: "n2-8"
+      service_deployment_type: "nodePort" # not loadBalancer.
+    features: "split provider"
+
+    local_vm: "n2-8cpus"
+
+  range_configs: 
+  - "experiment/deployment/params/cache_policy"
+  - "experiment/pipeline/params/sleep_time_msec"
+  client:
+    params:
+      vlog: 0
+      epochs: 1
+      repetitions: 1
+      processing_mode: "distributed_epoch"
+      client_buffer: 8
+      take_num_rows: -1 # distributes the entire dataset but only measures for take_num_rows (alleviate client heartbeat delay).
+      clear_os_cache: true
+      max_request_pipelining_per_worker: 8
+  pipeline:
+    name: "read_inflate_sleep"
+    params:
+      data_path: "gs://tfdata-imagenet-dada/tfrecords/train" #"./gluster/data/train/"
+      batch_size: 900
+      num_files_to_read: 10
+      sleep_time_msec: 
+      - 400
+  deployment:
+    type: "kubernetes-service"
+    params:
+      worker_disable_compress: True
+      #- True
+      filestore_cache: False # Gluster by default
+      num_workers: 1
+      scaling_policy: 2
+      cache_policy: 
+      - 2
+      - 3
+      - 4
+      - 5
+      - 4  # 2==compute, 3==cache(put, then get from 2nd epoch)
+      cache_format: 2 # 2==tfrecords, 1==arrow, 0==arrow_bis.
+      cache_compression: 1 # 1==None
+      cache_ops_parallelism: 8 
+      cache_path: "./gluster/cache"
+      #checkpoint_dir: "./gluser/checkpoint"
+      #checkpoint_freq_ms: "100000000"
+      vlog: 0
+      kubernetes_deployment: "autoscale"
+      clear_os_cache: true
+      log_dumps: true
+      log_dir: "./gluster/dispatcher_dumps/"
+      log_dumps_interval_ms: 5000 
+      image: "tf_develop:tf28"
+      worker_heartbeat_interval_ms: 5000
+      nightly: False
+      nethz: "dkluser"
+      zone: "us-central1-a"
+      region: "us-central1"
+      glusterfs_ip: "10.128.0.95"
+

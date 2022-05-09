@@ -1,0 +1,46 @@
+experiment:
+  meta:
+    name: "Default experiment"
+  range_configs: "" # Indicate a list of access paths for configs.
+  client:
+    params:
+      epochs: 10
+      repetitions: 1
+      take_num_rows: -1 # distributes the entire dataset but only measures for take_num_rows (alleviate client heartbeat delay).
+      client_buffer: 1 # max_outstandind_requests for distribute call.
+      processing_mode: "parallel_epochs"
+
+  deployment:
+    type: #local-service # local-put, local-get, local-service, service
+    params:
+      image: "tf_easl:ana"
+      filestore_cache: False
+      vlog: 0
+      num_workers: 1
+      cache_policy: 1
+      cache_format: 1 # TODO add support for service
+      cache_compression: 1 # TODO add support for service
+      cache_ops_parallelism: 8 # TODO add support for service
+      scaling_policy: 1 # TODO add support for service
+
+  pipeline:
+    name: "random_dataset"
+    params:
+      rows: 10
+      columns: 1
+      bytes_per_row: 12582912 # 1024 * 1024 * 3 * 4
+      datatype: "int32"
+
+
+  deployment_local:
+    type: local-get, local-put
+    params:
+      clear_os_cache: True
+      cache_path: "/aymond..."
+      filestore_cache: False
+      vlog: 0
+      cache_format: 1
+      cache_compression: 1
+      cache_ops_parallelism: 8
+
+
