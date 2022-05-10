@@ -32,6 +32,7 @@ Clients fetch data from the workers that are assigned to them by the dispatcher.
 
 This repository has the following structure:
   
+```
 .  
 ├── deploy  → Contains a set of scripts for deploying [GCP](https://cloud.google.com/) VMs where the artifacts can be evaluated  
 ├── docs    → Contains elements pertaining to this documentation (e.g. figures)  
@@ -44,6 +45,7 @@ This repository has the following structure:
 ├── local  → Contains a set of scripts for deploying Cachew locally  
 ├── LICENSE  
 └── README.md  
+```
 
 ### Writing an ML input data pipeline for Cachew
 
@@ -127,12 +129,15 @@ The deployment script will generate a `config.json` file, containing a brief sum
 ### Accessing a VM
 
 Once the VM is up and running, you can ssh into it via the gcloud CLI tool: `gcloud compute ssh <your_vm_name> --zone=us-central1-a --project=cachew-artifact-eval`. The VM should be fully set up and ready to run experiments. In your home directory, you should be able to find the following folders:
-
+  
+```
 .  
 ├── cachew_experiments  → A clone of this repository    
 ├── requirements.txt  → The essential python dependencies for running the experiments (should already be installed in your local pip repository)  
 ├── snap  
 └── tensorflow-2.8.0-cp39-cp39-linux_x86_64.whl  → Cachew's client binary (should already be installed in your local pip repository)  
+  
+```
 
 As your VM should be fully set up, you do not need to make any further changes. Skip to [this section](#running_experiments) for details on how to run the experiments in the paper. 
 
