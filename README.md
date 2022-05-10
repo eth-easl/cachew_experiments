@@ -147,8 +147,7 @@ Once you have completed running your experiments, make sure to stop or delete th
 
 ### <a name="running_experiments"/>Running Experiments
 
-The [experiments](experiments) folder provides scripts and instructions to reproduce the key results from the Cachew paper published at USENIX ATC'22. 
-
+The [experiments](experiments) folder provides scripts and instructions to reproduce the key results from the Cachew paper published at USENIX ATC'22. Please look up the README of each experiment and follow the steps in order to execute the experiments.
 
 ## Contributing
 
