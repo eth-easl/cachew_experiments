@@ -132,10 +132,8 @@ check_gcloud_authenticated () {
   echo -n "Checking whether gcloud is authenticated"
   if gcloud compute instances list > /dev/null 2>&1; then
     echo_success
-    return 0
   else
     echo_failure
-    return 1
   fi
 
   echo -n "Setting gcloud region to $region and $zone"
