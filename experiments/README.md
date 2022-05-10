@@ -1,4 +1,4 @@
-## Cachew experiments
+# Cachew experiments
 
 This folder provides scripts and instructions for reproducing key results from our USENIX ATC'22 paper:
 
