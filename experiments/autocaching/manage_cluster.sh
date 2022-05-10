@@ -121,6 +121,13 @@ check_gcloud_authenticated () {
     return 1
   fi
 
+  echo -n "Setting gcloud region to $region and $zone"
+  if gcloud config set compute/region $region >> "$logfile" 2>&1 && \
+    gcloud config set compute/zone $zone >> "$logfile" 2>&1; then
+    echo_success
+  else
+    echo_failure
+  fi
 
 }
 
@@ -166,7 +173,7 @@ start_gluster () {
     --region "$region" \
     --zone "$zone" >> "$logfile" 2>&1; then
     echo_success
-    return 0 
+    return 0
   fi
   echo_failure
   return 1
@@ -181,7 +188,7 @@ stop_gluster () {
     --region "$region" \
     --zone "$zone" >> "$logfile" 2>&1; then
     echo_success
-    return 0 
+    return 0
   else
     echo_failure
   fi
@@ -241,7 +248,7 @@ start_kubernetes () {
 
   echo -n "Starting kubernetes cluster"
   export KOPS_CLUSTER_NAME=${nethz}-tfdata-service.k8s.local
-  export KOPS_FEATURE_FLAGS=AlphaAllowGCE 
+  export KOPS_FEATURE_FLAGS=AlphaAllowGCE
 
   if kops create -f "./tmp/kubernetes_cluster.yaml" >> "$logfile" 2>&1 && \
       kops update cluster --name "$KOPS_CLUSTER_NAME" --yes >> "$logfile" 2>&1 && \
@@ -254,6 +261,8 @@ start_kubernetes () {
 
 
 }
+
+
 
 setup_kubernetes_nodes () {
   echo -n "Creating gluster endpoints"
@@ -269,13 +278,7 @@ setup_kubernetes_nodes () {
   fi
 
   if false; then
-    echo -n "Setting gcloud region to $region and $zone"
-    if gcloud config set compute/region $region >> "$logfile" 2>&1 && \
-      gcloud config set compute/zone $zone >> "$logfile" 2>&1; then
-      echo_success
-    else
-      echo_failure
-    fi
+
 
     list=$(get_kube_workers)
     while IFS= read -r node_name; do
@@ -334,10 +337,10 @@ deploy_tfdata_service () {
     echo_failure
 
   fi
-  kube_worker_names=$(get_kube_tfdata_workers) 
+  kube_worker_names=$(get_kube_tfdata_workers)
   kube_dispatcher_name=$(get_kube_dispatcher)
   readarray -t worker_names_array <<<"$kube_worker_names"
-  
+
   num_kube_workers=$(echo "$kube_worker_names" | wc -l)
   if [[ "$num_kube_workers"  != "$num_tfdata_workers" ]]; then
     echo "number of kube workers ($num_kube_workers) and tf data workers ($num_tfdata_workers) does not match." >> "$logfile"
@@ -350,19 +353,19 @@ deploy_tfdata_service () {
   for (( i=0; i<num_tfdata_workers; i++ )); do
     {
       echo "- index: $i"
-      echo "  port: $(( 31001 + i))" 
+      echo "  port: $(( 31001 + i))"
       echo "  name: data-service-worker-${i}"
-      echo "  ip: ${worker_names_array[$i]}" 
+      echo "  ip: ${worker_names_array[$i]}"
     } >> tmp/data_service_inp.yaml
 
   done
 
   {
-    echo "dispatcher_ip: $kube_dispatcher_name" 
+    echo "dispatcher_ip: $kube_dispatcher_name"
     echo "disp_port: 31000"
     echo "docker_image: gcr.io/tfdata-service/$(yq -r ".image" $service_config_yaml)"
   } >> tmp/data_service_inp.yaml
-  
+
   jinja2 ./templates/data_service.yaml ./tmp/data_service_inp.yaml > ./tmp/data_service.yaml
   if kubectl apply -f tmp/data_service.yaml >> "$logfile" 2>&1; then
     echo_success
@@ -388,7 +391,7 @@ deploy_tfdata_service () {
 stop_tfdata_service () {
   services=$(kubectl get services | grep data-service | awk '{print $1}')
   readarray -t services_arr <<<"$services"
-  
+
   for service in "${services_arr[@]}"
   do
     echo -n "Stopping $service..."
@@ -398,7 +401,7 @@ stop_tfdata_service () {
     else
       echo_failure
     fi
-  done 
+  done
 }
 
 install_dependencies () {
@@ -417,9 +420,11 @@ if [[ "$cmd" == "status" ]]; then
   check_kubernetes
   check_tfdata_service_up
 elif [[ "$cmd" == "restart_service" ]]; then
+  check_gcloud_authenticated
   stop_tfdata_service
   deploy_tfdata_service
 elif [[ "$cmd" == "start" ]]; then
+  check_gcloud_authenticated
   start_gluster
   mount_glusterfs
   stop_kubernetes
@@ -427,8 +432,9 @@ elif [[ "$cmd" == "start" ]]; then
   setup_kubernetes_nodes
   deploy_tfdata_service
 elif [[ "$cmd" == "stop" ]]; then
+  check_gcloud_authenticated
   stop_tfdata_service
   umount_glusterfs
-  stop_gluster 
+  stop_gluster
   stop_kubernetes
 fi

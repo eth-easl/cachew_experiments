@@ -138,7 +138,13 @@ check_gcloud_authenticated () {
     return 1
   fi
 
-
+  echo -n "Setting gcloud region to $region and $zone"
+  if gcloud config set compute/region $region >> "$logfile" 2>&1 && \
+    gcloud config set compute/zone $zone >> "$logfile" 2>&1; then
+    echo_success
+  else
+    echo_failure
+  fi
 }
 
 check_gluster_mounted () {
@@ -285,14 +291,7 @@ setup_kubernetes_nodes () {
     echo_failure
   fi
 
-  echo -n "Setting gcloud region to $region and $zone"
-  if gcloud config set compute/region $region >> "$logfile" 2>&1 && \
-    gcloud config set compute/zone $zone >> "$logfile" 2>&1; then
-    echo_success
-  else
-    echo_failure
-  fi
-  
+
   if false; then
     list=$(get_kube_workers)
     while IFS= read -r node_name; do
@@ -545,9 +544,11 @@ if [[ "$cmd" == "status" ]]; then
   check_kubernetes
   check_tfdata_service_up
 elif [[ "$cmd" == "restart_service" ]]; then
+  check_gcloud_authenticated
   stop_tfdata_service
   deploy_tfdata_service
 elif [[ "$cmd" == "start" ]]; then
+  check_gcloud_authenticated
   start_gluster
   mount_glusterfs
   #stop_kubernetes
@@ -555,6 +556,7 @@ elif [[ "$cmd" == "start" ]]; then
   setup_kubernetes_nodes
   deploy_tfdata_service
 elif [[ "$cmd" == "stop" ]]; then
+  check_gcloud_authenticated
   stop_tfdata_service
   umount_glusterfs
   #stop_gluster 
