@@ -115,7 +115,7 @@ get_internal_ip () {
 # Define a function which updates the dispatcher IP in the pre-processing scripts
 function update_dispatcher {(
   dispatcher_name=$( kubectl get nodes | head -n 2 | tail -n 1 | awk '{print $1}' )
-  sed -i "s/DISPATCHER_IP=['\"][a-zA-Z0-9-\.]*['\"]/DISPATCHER_IP='$(get_internal_ip "${dispatcher_name}")'/" "${base_dir}/${preprocessing_source}"
+  sed -i "s/DISPATCHER_IP=['\"][\.a-zA-Z0-9]*['\"]/DISPATCHER_IP='$(get_internal_ip "${dispatcher_name}")'/" "${base_dir}/${preprocessing_source}"
 )}
 
 # Define a function which executes the entire experiment

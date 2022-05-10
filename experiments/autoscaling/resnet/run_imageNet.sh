@@ -53,7 +53,7 @@ params+="--tf_gpu_thread_mode=gpu_private " #gpu_private / gpu_shared / global
 #params+="--per_gpu_thread_count=1 "
 params+="--datasets_num_private_threads=32 "
 params+="--data_dir=$data_dir "
-params+="--model_dir=$model_dir "
+#params+="--model_dir=$model_dir "
 params+="--enable_checkpoint_and_export=$enable_checkpoint_and_export "
 params+="--single_l2_loss_op "
 params+="--verbosity=1 "
