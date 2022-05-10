@@ -1,0 +1,29 @@
+filestore_cache: False #Whether to create a Filestore instance for the cache
+image: "tf_develop:dkluser" # The docker image to use for the service
+vlog: 0 # The vlog level at the service
+num_workers: 1 # The number of workers in the service.
+glusterfs_ip: 10.128.0.14
+
+# Used for the dispatcher:
+scaling_policy: 2
+cache_policy: 2
+cache_format: 2 # 2==tfrecords, 1==arrow, 0==arrow_bis.
+cache_compression: 1 # 1==no compression
+cache_ops_parallelism: 8 # number of threads for reader and writers.
+cache_path: "./gluster/cache"
+# Specifies whether to enable log dumps at dispatcher.
+# Will automatically set the log_dir param of the dispatcher and copy logs into meta/path_to_logs/..
+# Only valid for local-service and kubernetes-service deployment.
+log_dumps: false
+log_dir: "./gluster/logs" # Will be set by the exp script. We use the log_dumps param to decide on this.
+log_dumps_interval_ms: 1000 # Only valid if log_dumps is true.
+
+# Used for worker
+worker_heartbeat_interval_ms: 5000 # The heartbeat interval between worker and dispatcher, in ms.
+
+nightly: False
+nethz: "dkluser" # TODO update this!
+checkpoint_dir: "./gluster/checkpoints" # TODO update this!
+checkpoint_freq_ms: 999000
+zone: "us-central1-a"
+region: "us-central1"

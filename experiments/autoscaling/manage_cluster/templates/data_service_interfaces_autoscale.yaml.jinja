@@ -1,0 +1,16 @@
+{#%- set workers = 1 -%#}
+{#%- set port = 5050 -%#}
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: data-service-dispatcher
+spec:
+  type: NodePort
+  selector:
+    name: data-service-dispatcher
+  ports:
+  - port: {{ disp_port }}
+    targetPort: {{ disp_port }}
+    protocol: TCP
+    nodePort: {{ disp_port }}
