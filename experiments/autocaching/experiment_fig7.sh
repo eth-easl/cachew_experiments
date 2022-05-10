@@ -20,10 +20,10 @@ while getopts "h?s" opt; do
 done
 
 out_dir=$(realpath "./experiment_out")
-out_dir_bak=$(realpath "./experiments_bak")
+out_dir_bak=$(realpath "./experiments_bak_$(date +%s)")
 
 if [[ -d $out_dir ]]; then
-  sudo mv -"$out_dir"/* "$out_dir_bak"
+  sudo mv "$out_dir" "$out_dir_bak"
 fi
 mkdir -p "$out_dir"
 
@@ -35,6 +35,7 @@ else
   echo "Complete experiment..."
   experiment_yaml="full_exp.yaml"
 fi
+
 
 
 {
