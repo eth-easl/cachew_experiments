@@ -10,7 +10,7 @@ log_dir=${SCRIPT_DIR}/traces_multi_tenant_$( date +"%Y-%m-%d_%T" )
 mkdir -p ${log_dir}
 
 echo "Running experiments on ResNet..."
-scale=(8) #(1 2 3 4 5 6 7 8)
+scale=(1 2 3 4 5 6 7 8)
 base_dir=$(realpath ../resnet)
 executable="run_imageNet.sh"
 preprocessing_source="imagenet_preprocessing.py"
@@ -87,7 +87,7 @@ function start_cluster {(
 
   echo "Deploying service with ${workers} workers..."
   sed "s/cache_policy:[ \t]\+[0-9]\+/cache_policy: $cache_policy/g" "${service_loc}/default_config.yaml" > ${service_loc}/temp_config.yaml
-  ./manage_cluster.sh restart_service -s ${scale_policy} -w ${workers} -f ${service_loc}/temp_config.yaml ${enable_hpa} 
+  ./manage_cluster.sh restart_service -s ${scale_policy} -w ${workers} -f ${service_loc}/temp_config.yaml ${enable_hpa}
   echo "./manage_cluster.sh restart_service -s ${scale_policy} -w ${workers} -f ${service_loc}/temp_config.yaml ${enable_hpa} "
   echo "Done deploying service!"
 )}
@@ -115,7 +115,7 @@ get_internal_ip () {
 # Define a function which updates the dispatcher IP in the pre-processing scripts
 function update_dispatcher {(
   dispatcher_name=$( kubectl get nodes | head -n 2 | tail -n 1 | awk '{print $1}' )
-  sed -i "s/DISPATCHER_IP=['\"][a-zA-Z0-9-]*['\"]/DISPATCHER_IP='$(get_internal_ip "${dispatcher_name}")'/" "${base_dir}/${preprocessing_source}"
+  sed -i "s/DISPATCHER_IP=['\"][a-zA-Z0-9-\.]*['\"]/DISPATCHER_IP='$(get_internal_ip "${dispatcher_name}")'/" "${base_dir}/${preprocessing_source}"
 )}
 
 # Define a function which executes the entire experiment
