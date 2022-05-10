@@ -41,6 +41,7 @@ This repository has the following structure:
 │   ├── autoscaling  → Figure 6a of the paper, and evaluates how Cachew's `autoscale` policy works compare to Kubernetes HPA's  
 │   ├── multi-tenancy  → Figure 10 of the paper, and evaluates how Cachew behaves in multi-tenant scenarios  
 │   └── README.md  
+├── local  → Contains a set of scripts for deploying Cachew locally  
 ├── LICENSE  
 └── README.md  
 
@@ -80,12 +81,15 @@ print("Training done!")
 
 The above input pipeline iterates through 100 integers. It increments each element, then sleeps for `400ms`. Finally, in order to execute this input pipeline in the service, it employs the `distribute` op, which forwards the processing request to the dispatcher. Note the use of the `mark` op. This is the `autocache` op. This serves as an potential cache location to Cachew. For more details, please have a look at the paper.
 
-In the model section of the code, we simply iterate through the dataset for two epochs. For each item in the dataset, we sleep for `200ms`. If Cachew is deployed in the atuoscaling mode, it should automatically increase the number of workers responsible with preprocessing the data to two, instead of one. This is done to ensure the client ingestion rate is met: $200ms = \frac{400ms}{2}$. 
+In the model section of the code, we simply iterate through the dataset for two epochs. For each item in the dataset, we sleep for `200ms`. If Cachew is deployed in the atuoscaling mode, it should automatically increase the number of workers responsible with preprocessing the data to two, instead of one. This is done to ensure the client ingestion rate is met: $ 200ms = \frac{400ms}{2} $. 
 
 For further instructions on how to deploy a simple local cluster, see [this section](#running_a_pipeline).
 
 ### <a name="running_a_pipeline"/>Executing an ML Input Pipeline with Cachew Locally
-TODO: instructions/script to run experiment. 
+
+As a prerequisite, you must have Cachew installed locally on your machine, if you intend to run it locally. To do this, download the Cachew wheel file using `gsutil cp gs://cachew-builds/tensorflow-2.8.0-cp39-cp39-linux_x86_64.whl .` and install it using: `python -m pip uninstall -y tensorflow && python -m pip install tensorflow-2.8.0-cp39-cp39-linux_x86_64.whl`. Note that this will uninstall your local tensorflow library. As a consequence, we recommend you use a virtual environment. 
+
+In the `local` directory, you will find a set of scripts which which are useful for deploying Cachew locally (where each entity in the deployment runs in its own local process). This folder also contains a `README.md`, detailing some of these components.
 
 ## Artifact Evaluation
 
