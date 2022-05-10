@@ -193,7 +193,7 @@ stop_gluster () {
 }
 
 umount_glusterfs () {
-  gname_prefix=$(gluster_name "$i")
+  gname_prefix=$(gluster_name "0")
   gname=$(get_hostname "$gname_prefix")
   echo -n "Unmounting GlusterFS at $mnt"
   if sudo umount "$mnt" >> "$logfile" 2>&1; then
@@ -204,7 +204,7 @@ umount_glusterfs () {
 }
 
 mount_glusterfs () {
-  gname_prefix=$(gluster_name "$i")
+  gname_prefix=$(gluster_name "0")
   gname=$(get_hostname "$gname_prefix")
   echo -n "Mounting GlusterFS at $mnt"
   if sudo mount -t glusterfs "${gname}":/tfdata_cache "$mnt" >> "$logfile" 2>&1; then
@@ -264,7 +264,7 @@ start_kubernetes () {
 
 setup_kubernetes_nodes () {
   echo -n "Creating gluster endpoints"
-  gname_prefix=$(gluster_name "$i")
+  gname_prefix=$(gluster_name "0")
   gname=$(get_hostname "$gname_prefix")
   gluster_ip=$(get_internal_ip "$gname")
   if jinja2 ./templates/gluster_endpoint.yaml -D ip="$gluster_ip" > tmp/gluster_endpoint.yaml && \
