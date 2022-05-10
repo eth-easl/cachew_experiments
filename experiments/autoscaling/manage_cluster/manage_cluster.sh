@@ -551,7 +551,7 @@ elif [[ "$cmd" == "start" ]]; then
   check_gcloud_authenticated
   start_gluster
   mount_glusterfs
-  #stop_kubernetes
+  stop_kubernetes
   start_kubernetes
   setup_kubernetes_nodes
   deploy_tfdata_service
@@ -559,6 +559,6 @@ elif [[ "$cmd" == "stop" ]]; then
   check_gcloud_authenticated
   stop_tfdata_service
   umount_glusterfs
-  #stop_gluster 
+  stop_gluster 
   stop_kubernetes
 fi
