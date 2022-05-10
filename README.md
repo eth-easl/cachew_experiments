@@ -39,15 +39,7 @@ TODO: instructions/script to run experiment.
 
 ## Detailed Instructions 
 
-We provide instructions to reproduce three key results from the Cachew paper published at USENIX ATC'22.
-
-TODO: instructions for reproducing figures in paper. 
-
-### Autoscaling experiment 
-
-### Autocaching experiment
-
-### Multi-tenant autoscaling & autocaching experiment
+The [experiments](experiments) folder provides scripts and instructions to reproduce the key results from the Cachew paper published at USENIX ATC'22. 
 
 ## Contributing
 
