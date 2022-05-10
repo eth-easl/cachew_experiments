@@ -45,7 +45,7 @@ experiment:
       - 3
       - 4
       - 5
-      - 4  # 2==compute, 3==cache(put, then get from 2nd epoch)
+        #- 4  # 2==compute, 3==cache(put, then get from 2nd epoch)
       cache_format: 2 # 2==tfrecords, 1==arrow, 0==arrow_bis.
       cache_compression: 1 # 1==None
       cache_ops_parallelism: 8 
