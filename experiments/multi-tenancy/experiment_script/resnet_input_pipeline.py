@@ -294,7 +294,7 @@ def run(params):
     print("job_name must be specified")
     sys.exit()
 
-  data_path = "gs://tfdata-imagenet-cachew-atc"
+  data_path = "gs://tfdata-imagenet-atc-cachew"
   do_parallelise_io = True
   batch_size = 256
   num_files_to_read = 1024
