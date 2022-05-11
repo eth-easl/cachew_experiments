@@ -238,7 +238,7 @@ start_kubernetes () {
     -D "nethz=$nethz" \
     -D "zone=$zone" \
     -D "region=$region" \
-    -D "num_nodes=$num_kubernetes_nodes" > ./tmp/kubernetes_cluster.yaml; then
+    -D "num_nodes=$num_kubernetes_nodes" > ./tmp/kubernetes_cluster.yaml < ""; then
     echo_success
   else
     echo_failure
@@ -267,7 +267,7 @@ setup_kubernetes_nodes () {
   gname_prefix=$(gluster_name "0")
   gname=$(get_hostname "$gname_prefix")
   gluster_ip=$(get_internal_ip "$gname")
-  if jinja2 ./templates/gluster_endpoint.yaml -D ip="$gluster_ip" > tmp/gluster_endpoint.yaml && \
+  if jinja2 ./templates/gluster_endpoint.yaml -D ip="$gluster_ip" > tmp/gluster_endpoint.yaml < "" && \
     [[ -n "$gluster_ip" ]] && \
     kubectl apply -f tmp/gluster_endpoint.yaml >> "$logfile" 2>&1; then
     echo_success
@@ -311,7 +311,7 @@ deploy_tfdata_service () {
     echo "  port: $(( 31001 + i))" >> tmp/inp.yaml
   done
 
-  if jinja2 ./templates/data_service_interfaces.yaml ./tmp/inp.yaml > ./tmp/data_service_interfaces.yaml && \
+  if jinja2 ./templates/data_service_interfaces.yaml ./tmp/inp.yaml > ./tmp/data_service_interfaces.yaml < "" && \
     kubectl apply -f tmp/data_service_interfaces.yaml >> "$logfile" 2>&1; then
     echo_success
   else
@@ -364,7 +364,7 @@ deploy_tfdata_service () {
     echo "docker_image: gcr.io/tfdata-service/$(yq -r ".image" $service_config_yaml)"
   } >> tmp/data_service_inp.yaml
 
-  jinja2 ./templates/data_service.yaml ./tmp/data_service_inp.yaml > ./tmp/data_service.yaml
+  jinja2 ./templates/data_service.yaml ./tmp/data_service_inp.yaml > ./tmp/data_service.yaml < ""
   if kubectl apply -f tmp/data_service.yaml >> "$logfile" 2>&1; then
     echo_success
   else
