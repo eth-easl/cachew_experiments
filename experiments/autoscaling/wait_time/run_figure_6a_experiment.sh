@@ -10,7 +10,7 @@ log_dir=${SCRIPT_DIR}/traces_multi_tenant_$( date +"%Y-%m-%d_%T" )
 mkdir -p ${log_dir}
 
 echo "Running experiments on ResNet..."
-scale=(1 2 3 4 5 6 7 8)
+scale=(1 2 3 4 5 6)
 base_dir=$(realpath ../resnet)
 executable="run_imageNet.sh"
 preprocessing_source="imagenet_preprocessing.py"
@@ -51,9 +51,9 @@ function run_one {(
   fi
   cluster_log_dir=${experiment_dir}/cluster
   mkdir -p ${cluster_log_dir}  # Implicitly creates experiment_dir
-  echo "Starting run ${run} with ${scale} workers and writing to ${experiment_dir}/output.log ..."
+  echo "$(date): Starting run ${run} with ${scale} workers and writing to ${experiment_dir}/output.log ..."
   ( cd ${base_dir} && CACHEW_METRICS_DUMP=${experiment_dir}/metrics.csv ./${executable} > ${experiment_dir}/output.log 2>&1 )
-  echo "Finished run ${run} with ${scale} workers!"
+  echo "$(date): Finished run ${run} with ${scale} workers!"
 
   # Dump the kubernetes cluster stats
   pods=$( kubectl get pods )
