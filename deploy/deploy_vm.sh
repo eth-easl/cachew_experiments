@@ -2,7 +2,6 @@
 
 # Get the parameters of this deployment
 name=${1:-""}
-USER=anon8
 gpu_count=${2:-0}
 machine_type=${3:-"n1-standard-8"}
 project=${4:-"cachew-artifact-eval"}
@@ -76,8 +75,8 @@ echo "VM is up!"
 
 # Set up the environment
 echo "Setting up environment..."
-gcloud compute scp requirements.txt $USER@${name}:~ --zone=us-central1-a --project=${project}
-gcloud compute ssh $USER@${name} --zone=us-central1-a --project=${project} -- "bash -s" < environment.sh
+gcloud compute scp requirements.txt ${name}:~ --zone=us-central1-a --project=${project}
+gcloud compute ssh ${name} --zone=us-central1-a --project=${project} -- "bash -s" < environment.sh
 
 # Setup is finished
 echo "Deployment complete!"
