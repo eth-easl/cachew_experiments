@@ -26,6 +26,48 @@ Cachew's input data workers are stateless components responsible for producing b
 Clients fetch data from the workers that are assigned to them by the dispatcher. Clients and workers periodically send heartbeats to the dispatcher to maintain membership in the service and provide metrics used for the autoscaling and autocaching policies.
 
 
+## <a name="prerequisites"/>Prerequisites
+
+### General Prerequisites
+
+Our scripts make extensive use of the `gcloud CLI` tool. As a consequence, this tool is a prerequisite for setting up VMs and running experiments. Please follow [this tutorial](https://cloud.google.com/sdk/docs/install) to install it. We additionally make use of the `gsutil` tool. To install it, please follow [this tutorial](https://cloud.google.com/storage/docs/gsutil_install). We also suggest that you use Python 3.9 when using Cachew. In this sense we recommend [PyEnv](https://github.com/pyenv/pyenv) as a means to install and manage multiple python versions and virtual environments.
+
+
+### Software Prerequisites for Full Service Deployment
+
+If you plan to deploy Cachew as a full service, you will need to set up a client VM which meets the following software dependencies:
+
+* Ubuntu 18.04.5 LTS (GNU/Linux 5.4.0-1072-gcp x86\_64) with root access
+* kubectl v1.21.3
+* kops v.1.20
+* Nvidia GPU Driver v460.27.04
+* CUDA v11.2
+* cuDNN v8.1
+* Python 3.9.12
+* Google Cloud SDK (preferably v384.0.0)
+
+
+To deploy the service itself, one requires 
+* A Docker image deploying Cachew builds with CPU-only support. This is used in the Cachew service for the Dispatcher and Workers
+* A client-only build of Cachew with GPU/TPU support. 
+
+A safe commit hash at which these can be built is `c7b02e90b4384e721f7c6b13ec55a21cd5295a47`.
+
+### Hardware Prerequisites for Full Service Deployment
+
+If you plan to deploy a Full Cachew Service, you will need the following hardware for your Client VM:
+
+* Intel or AMD x86 CPU with hardware virtualization support
+* Nvidia V100 GPUs or v3-8 TPUs
+* Around 50 GB of disk space on your root partition
+
+For the Dispatcher as well as the Worker nodes, one requires only VMs with compute power. No accelerators are required. 
+
+### Deployment and Experiment Automation
+
+Since deploying a cluster and running experiments can be complicated, we provide a set of scripts which automate these processes. For deploying a client VM you can use the scripts in the [deploy](deploy). Scripts for running artifact evaluations are found in [experiments](experiments). Further information on how to use this is provided in [this section](#artifact_eval).
+
+
 ## Getting Started
 
 ### Repository structure
@@ -89,21 +131,25 @@ For further instructions on how to deploy a simple local cluster, see [this sect
 
 ### <a name="running_a_pipeline"/>Executing an ML Input Pipeline with Cachew Locally
 
-As a prerequisite, you must have Cachew installed locally on your machine, if you intend to run it locally. To do this, download the Cachew wheel file using `gsutil cp gs://cachew-builds/tensorflow-2.8.0-cp39-cp39-linux_x86_64.whl .` and install it using: `python -m pip uninstall -y tensorflow && python -m pip install tensorflow-2.8.0-cp39-cp39-linux_x86_64.whl`. Note that this will uninstall your local tensorflow library. As a consequence, we recommend you use a virtual environment. 
+As a prerequisite, you must have Cachew installed locally on your machine, if you intend to run it locally. To do this, download the Cachew wheel file using `gsutil cp gs://cachew-builds/tensorflow-2.8.0-cp39-cp39-linux_x86_64.whl .` and install it using: `python -m pip uninstall -y tensorflow && python -m pip install tensorflow-2.8.0-cp39-cp39-linux_x86_64.whl`. Note that this will uninstall your local tensorflow library. As a consequence, we recommend you use a virtual environment. Please note that we have only tested this on Ubuntu LTE 20.04 (kernel version 5.13.0-40-generic). As a consequence, this might not work on other Operating Systems.
 
-In the `local` directory, you will find a set of scripts which are useful for deploying Cachew locally (where each entity in the deployment runs in its own local process). This folder also contains a `README.md`, detailing some of these components.
+In the [local](local) directory, you will find a set of scripts which are useful for deploying Cachew locally (where each entity in the deployment runs in its own local process). This folder also contains a `README.md`, detailing some of these components.
 
-## Artifact Evaluation
 
-Browse to the `deploy` directory. Here you will find the scripts required to automatically set up and tear down a VM for artifact evaluation.
+## <a name="artifact_eval"/>Artifact Evaluation
 
-### Prerequisites
+Make sure the prerequisites are installed by following [this section](#prerequisites). 
 
-Our scripts make extensive use of the `gcloud CLI` tool. As a consequence, this tool is a prerequisite for setting up VMs and running experiments. Pleas follow [this tutorial](https://cloud.google.com/sdk/docs/install) to install it. 
+The directories of interest for this task are: 
+
+* [deploy](deploy): Here you will find the scripts required to automatically set up and tear down a VM for artifact evaluation.
+* [experiments](experiments): Here you will find a set of subdirectories, one for each experiment to be reproduced. 
+
+We first present how to set up, access and tear down a VM that can be used for artifact evaluation. Then we present how this VM can be used to run the artifact evaluation experiments.
 
 ### Deploying a VM
 
-Run `./deploy_vm.sh <your_vm_name>` to deploy a VM. This script has the following parameters:
+Move into the [deploy](deploy) directory and run `./deploy_vm.sh <your_vm_name> <gpu_count>` to deploy a VM. This script has the following parameters:
 
 ```
 Usage: ./deploy_vm.sh <params>*
@@ -118,9 +164,9 @@ Params:
 
 Note that not every experiment requires GPUs:
 
-* `autocaching`: requires no GPUs
-* `autoscaling`: requires 4 GPUs
-* `multi-tenancy`: requires no GPUs
+* `autocaching`: **requires no GPUs**
+* `autoscaling`: **requires 4 GPUs**
+* `multi-tenancy`: **requires no GPUs**
 
 To avoid incurring excessive costs, please do not allocate GPUs unless necessary. The rest of the parameters can be left unchanged.
 
@@ -143,11 +189,20 @@ As your VM should be fully set up, you do not need to make any further changes. 
 
 ### Tearing down a VM 
 
-Once you have completed running your experiments, make sure to stop or delete the previously created instance to reduce the VM and storage costs. We provide the `./termiante.sh` script, which deletes the instance identified in the `instance.name` file, as well as its associated storage. 
+Once you have completed running your experiments, make sure to stop or delete the previously created instance to reduce the VM and storage costs. We provide the `./terminate.sh` script in the [deploy](deploy) directory, which deletes the instance identified in the `instance.name` file, as well as its associated storage. 
 
-### <a name="running_experiments"/>Running Experiments
+### <a name="running_experiments"/>Complete Workflow for Running Experiments
 
-The [experiments](experiments) folder provides scripts and instructions to reproduce the key results from the Cachew paper published at USENIX ATC'22. Please look up the README of each experiment and follow the steps in order to execute the experiments.
+The [experiments](experiments) folder provides scripts and instructions to reproduce the key results from the Cachew paper published at USENIX ATC'22. Please look up the README of each experiment and follow the steps in order to execute the experiments. Generally, you should follow the next steps to execute an experiment (we assume you are in the top level directory of this repository):
+
+1. Deploy a VM for artifact evaluation using `cd deploy && ./deploy.sh <vm-name> <gpu-count>`
+1. Use the `gcloud compute ssh <vm-name>` command to ssh into the VM
+1. Use `cd ~/cachew/experiments/experiments/<experiment>` to move to the experiment dir. Follow the README there and use the associated scripts to run the experiments.
+1. Once the experiment is complete, use `gcloud compute scp` **from your local machine** to collect whatever resource you find relevant after the experiment is done. This can be a plot, csv, or a text-based log file.
+1. Tear down the VM using the `./terminate.sh`  script in the [deploy](deploy) **from your local machine**.
+
+**Please note: when running the experiment scripts you should be ssh'd into the VM you spun up. Do not run the experiments from your own local machine.**
+
 
 ## Contributing
 
