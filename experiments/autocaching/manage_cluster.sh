@@ -330,7 +330,7 @@ deploy_tfdata_service () {
   done
   echo_success
 
-  echo -n "Deploying tf-data service..."
+  echo -n "Deploying Cachew service..."
   if [[ ! -f "$service_config_yaml" ]]; then
     echo_failure
 
