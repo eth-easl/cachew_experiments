@@ -105,7 +105,7 @@ def plot_trace(path, save_path, y_lim, x_lim):
     for i, pair in enumerate(pairs):
       t = int(pair[1] - pair[0])
       times.append(t)
-      plt.axvspan(pair[0], pair[1], alpha=0.3, color=color_sequence[i], hatch=hitch)
+      plt.axvspan(pair[0], pair[1], alpha=0.3, color=color_sequence[min(i, len(color_sequence)-1)], hatch=hitch)
       # plt.text(pair[0] + t // 2 - 100, plt.ylim()[1] + 0.05, f"Time {t}s")
 
 
