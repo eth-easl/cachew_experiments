@@ -1,5 +1,5 @@
 All of the below commands are intended to be executed on the remote VM as deployed via the `deploy_vm.sh` script.
-1. **Starting the cluster**. Execute `./manage_cluster.sh start -w 10 -g 5` in the `manage_cluster` subfolder. The script will create and setup a cluster of several virtual machines.
+1. **Starting the cluster**. Execute `./manage_cluster.sh start -k 10 -w 10 -g 5` in the `manage_cluster` subfolder. The script will create and setup a cluster of several virtual machines.
 2. **Checking the status** of the cluster by executing `./manage_cluster.sh status` in the `manage_cluster` subfolder. If all the status indicators show a green `[OK]`, carry on with the next step.
 3. **Executing the experiment.** Make sure to use a terminal multiplexer (like `tmux`) in case your connection is interrupted. You may find a very short introduction of the minimum set of commands you need to use `tmux` at the end of the readme. Execute `./run_figure_10_experiment.sh` from within the `experiment_script` subfolder.
 4. **Retrieve the results.** The script will generate the plot at `multi-tenancy/experiment_script/traces_multi_tenant_XXXX/multi_tenant_plot.pdf`.
