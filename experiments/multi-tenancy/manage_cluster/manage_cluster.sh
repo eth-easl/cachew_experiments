@@ -1,0 +1,1 @@
+../../autoscaling/manage_cluster/manage_cluster.sh

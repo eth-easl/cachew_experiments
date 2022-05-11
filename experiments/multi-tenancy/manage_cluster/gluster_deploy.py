@@ -1,0 +1,1 @@
+../../autoscaling/manage_cluster/gluster_deploy.py

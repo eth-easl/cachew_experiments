@@ -59,6 +59,7 @@ function usage {
     echo "  -f [Cachew service config yaml]"
     echo "  -n [nethz ID]"
     echo "  -w [number of Cachew workers]"
+    echo "  -k [number of Kubernetes nodes]"
     echo "  -s [scaling policy]"
     echo "  -a enable kubernetes HPA"
     exit 1
@@ -72,7 +73,7 @@ if [[ "$cmd" != "start" ]] && [[ "$cmd" != "stop" ]] && [[ "$cmd" != "status" ]]
     exit 1
 fi
 
-while getopts "h?g:n:f:w:s:a" opt; do
+while getopts "h?k:g:n:f:w:s:a" opt; do
   case "$opt" in
     h|\?)
       usage
@@ -82,6 +83,8 @@ while getopts "h?g:n:f:w:s:a" opt; do
     g)  gluster_nodes=$OPTARG
       ;;
     w)  num_tfdata_workers=$OPTARG
+      ;;
+    k)  num_kubernetes_nodes=$OPTARG
       ;;
     s)  scaling_policy=$OPTARG
       ;;
