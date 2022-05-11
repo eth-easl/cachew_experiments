@@ -83,6 +83,8 @@ get_line_count () {
 #sudo copy_to_gluster.sh  # Note that this requires 'sudo'
 #echo "Done creating the GlusterFS cluster..."
 
+echo "Deleting everything on gluster"
+[[ -d /mnt/disks/gluster_data/cache ]] && sudo rm -rf /mnt/disks/gluster_data/cache
 # Create the kubernetes cluster
 cd "${service_path}"
 echo "Creating the Cachew service..."
@@ -133,7 +135,7 @@ cd "$SCRIPT_DIR"
 echo "Metrics gathered and plot generated"
 
 # Tear down resources
-echo "Tearing down resources..."
+
 #cd ${service_path} && python service_deploy.py --stop
 #cd ${gluster_path} && python gluster_deploy.py --delete_cluster
 #echo "Resources torn down and experiment finished"

@@ -61,7 +61,7 @@ replace_relevant_entries "$HOME/cachew_experiments/experiments/autoscaling/manag
 replace_relevant_entries "$HOME/cachew_experiments/experiments/autocaching/default_config.yaml"
 replace_relevant_entries "$HOME/cachew_experiments/experiments/autoscaling/manage_cluster/manage_cluster.sh"
 replace_relevant_entries "$HOME/cachew_experiments/experiments/autocaching/manage_cluster/default_config.yaml"
-replace_relevant_entries "$HOME/cachew_experiments/experiments/multi-tenancy/manage_cluster.sh"
+replace_relevant_entries "$HOME/cachew_experiments/experiments/multi-tenancy/manage_cluster/default_config.yaml"
 replace_relevant_entries "$HOME/cachew_experiments/experiments/autocaching/experiment-script/full_exp.yaml"
 replace_relevant_entries "$HOME/cachew_experiments/experiments/autocaching/experiment-script/short_exp.yaml"
 replace_relevant_entries "$HOME/cachew_experiments/experiments/autoscaling/resnet/run_imageNet.sh"
