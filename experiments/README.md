@@ -10,3 +10,17 @@ This folder provides scripts and instructions for reproducing key results from o
 3. The [multi-tenancy](multi-tenancy) experiment runs two ResNet50 input pipeline jobs. The goal of the experiment is to show that Cachew enables jobs with the same input pipeline to share cached data and the system will scale the number of workers for each job indepedently based on its requirements. In this experiment, the second job's client model ingestion rate is twice as high as the first job's model ingestion rate, hence the second job will be allocated more input data workers. Since the second job's input pipeline is the same as the first job's input pipeline whose result was cached, the second job's input data workers will immediately be able to read data from cache. This experiment reproduces Figure 10 in the paper.
 
 We use Google Cloud Compute Engine for all experiments and read input datasets from Google Cloud Storage buckets. Please see [this](https://docs.google.com/spreadsheets/d/1rEDdn2CCyz6irt_nthHyWYOcPwZ-f35vp71Efps5sYs/edit?usp=sharing) spreadsheet for an estimate of the time and cost of running each of the above experiments.
+
+
+## Troubleshooting
+
+### Failed to Mount GlusterFS
+
+During the deployment of a cluster using the `./manage_cluster.sh start` command (or any of its variants), GlusterFS is being deployed. It can sometimes happen that GlusterFS deployment will fail due to some reason. This will show up in the deployment check (note that GlusterFS could not be mounted):
+
+<img src="https://polybox.ethz.ch/index.php/s/DVyjK4dYqoQazHe/download" height=240/>
+
+In such cases, you should terminate the deployment via `./manage_cluster.sh stop` and try to redeploy via `./manage_cluster.sh start`.
+
+
+
