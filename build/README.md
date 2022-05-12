@@ -40,3 +40,4 @@ To summarize, the process of building and installing Cachew is the following:
 1. Build a Docker Image for the Cachew Dispatcher and Workers using the scripts in [docker](docker)
 1. Install the `cpu` `whl` file you created via `python -m pip install path/to/cpu_wheel` on the client VM
 1. Deploy a Kubernetes cluster using the Docker image you built. For this, you can use the deployment scripts we have provided for the experiments, however, do note that they will likely need to be adapted such that they work with images in your project.
+1. If the cluster has been successfully deployed, you can use it to process your input pipeline. To get the name of your dispatcher, you can use the command `kubectl get nodes` inside the VM which was used to deploy the cluster, and identify the name of the Dispatcher VM. This can then be used in the [tf.data service `distribute`](https://www.tensorflow.org/api_docs/python/tf/data/experimental/service) op. 
