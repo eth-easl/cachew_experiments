@@ -204,6 +204,10 @@ The [experiments](experiments) folder provides scripts and instructions to repro
 **Please note: when running the experiment scripts you should be ssh'd into the VM you spun up. Do not run the experiments from your own local machine.**
 
 
+## Building Cachew
+
+**Please note that you are not required to build Cachew or generate Docker images for it, as we have pre-built all the necessary binaries for running the artifact evaluation experiments.** We do however, provide scripts for building Cachew and generating its images. These can be found in the [build](build) folder. For more details, please follow the README file in the aforementioned directory.
+
 ## Contributing
 
 We welcome contributions to Cachew. Please see our [Cachew source code](https://github.com/eth-easl/cachew) repository.
