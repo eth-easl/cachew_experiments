@@ -25,7 +25,7 @@ mkdir -p ./$dirname
 echo "Done!"
 
 echo "Copying relevant files to build directory..."
-cp ./tfdata-service-profiling-key.json ./$dirname
+cp ./key.json ./$dirname
 cp ./build_dockerfile.test ./$dirname
 cp ./data_service.py ./$dirname
 cp ${whl_path} ./$dirname 

@@ -4,7 +4,9 @@ Make sure you have Docker installed. Otherwise, you can [follow this tutorial to
 
 Once you have built a `whl` file with `cpu`-only support, you can build a Cachew Docker image for your service (i.e. for the Dispatcher and the Workers).
 
-To build a Docker image, use the `build_docker.sh` script. This has the following parameters and associated default values
+You will first have to create a valid `key.json` file which give the service VMs permission to read and write to you GCS store. You can do this via a service account. The help out with the entries of a key file, we have added the `key.sh` template in this sense. Please see [this tutorial](https://flaviocopes.com/google-api-authentication/) on what it should contain. Once this is done, you can move to the next step.
+
+To build a Docker image, use the `build_docker.sh` script. This has the following parameters and associated default values:
 
 ```
 whl_path=${1:-""}
