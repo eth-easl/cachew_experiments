@@ -76,6 +76,7 @@ This repository has the following structure:
   
 ```
 .  
+├── build   → Contains a set of scripts for building Cachew 
 ├── deploy  → Contains a set of scripts for deploying [GCP](https://cloud.google.com/) VMs where the artifacts can be evaluated  
 ├── docs    → Contains elements pertaining to this documentation (e.g. figures)  
 │   └── figures  
