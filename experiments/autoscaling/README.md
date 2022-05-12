@@ -6,3 +6,11 @@ All of the below commands are intended to be executed on the remote VM as deploy
 5. **Tear down the cluster**. Please make sure to execute `./manage_cluster.sh stop` in the `manage_cluster` subfolder to tear down the cluster.
 
 *How to use `tmux`*: Execute `tmux` in the current directory. Then whatever command you want to execute in the background (i.e. `./run_figure_6a_experiment.sh`). You may now close this window by actually closing the terminal itself, **do not use `Ctrl+C` / `Ctrl+D`**. If at a later point you would like to check in on the experiment, ssh into your machine and execute `tmux attach -t 0` (tmux supports multiple of those "background sessions", so if you have multiple open sessions, you may be looking for an integer larger than `0`). In general you may want to interact with `tmux` using [keyboard shortcuts](https://gist.github.com/MohamedAlaa/2961058).
+
+### Reference Result
+
+Below we offer a reference result:
+
+<img src="reference-results/ref.png" height=375/>
+
+Keep in mind that epoch time can vary depending on cloud conditions. Decay may or may not be more or less aggressive due to this. Consequently, the Autoscale decision might vary around 4 workers (expected at most ±1 worker). 
