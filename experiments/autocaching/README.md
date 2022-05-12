@@ -10,6 +10,8 @@ All of the below commands are intended to be executed on the remote VM as deploy
 
 ### Reference Result and Variability
 
+This experiment runs a synthetic input pipeline with variable compute intensity. We show that Cachew makes the appropriate data caching decision based on the compute intensity of the input pipeline and the storage bandwidth, to maximize overall training throughput. This experiment reproduces Figure 7 in the paper.
+
 Keep in mind that epoch times might vary due to cloud conditions. The shape of the curves in your plot should still be the same, and a spike is expected in the compute curve on the lower end of the x-axis. Note that the points on the curves, and Cachew's decisions are recorded separately (i.e. in different runs). Consequently, conditions might change, and metrics could potentially vary leading Cachew to make a seemingly 'wrong' decision at points where the three options have similar throughput (this is also visible our reference plot at 400ms on the x-axis). Otherwise, Cachew decision expected to follow lowest batch time option.
 
 Below we offer the reference result:

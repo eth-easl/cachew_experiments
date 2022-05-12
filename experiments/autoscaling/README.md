@@ -9,6 +9,8 @@ All of the below commands are intended to be executed on the remote VM as deploy
 
 ### Reference Result and Variability
 
+This experiment runs ResNet50 model training on ImageNet while sweeping the number of input data workers. We compare the worker scaling decision of Cachew and the Kubernetes Horizontal Pod Autoscaler baseline. This experiment reproduces Figure 6a in the paper. Since this experiment is expensive to run in the cloud, by default our scripts only reproduce the compute mode curve in Figure 6a.
+
 Keep in mind that epoch time can vary depending on cloud conditions. Decay may or may not be more or less aggressive due to this. Consequently, the Autoscale decision might vary around 4 workers (expected at most ±1 worker). While it is rare, it can happen that the Kubernetes HPA scaling also changes from one worker to two (see 2nd reference image). 
 
 Below we offer two reference results:
