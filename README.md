@@ -1,5 +1,7 @@
 ![cachew-logo](docs/figures/cachew_logo.png)
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6543943.svg)](https://doi.org/10.5281/zenodo.6543943)
+
 # Machine Learning Input Data Processing as a Service
 
 Cachew is a multi-tenant service for efficient input data processing in machine learning jobs. 
