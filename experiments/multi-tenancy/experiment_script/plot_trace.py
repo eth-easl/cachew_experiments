@@ -32,6 +32,7 @@ event_colors = ["orange", "cyan"]
 line_style = ["dotted", "dashdot"]
 scale_hitches = ['/', '\\']
 epoch_colors = [["yellow", "blue", "green", "gray"], ["green", "green", "green", "gray"]]
+epoch_colors_by_mode = {"GET": "green", "PUT": "blue", "PROFILE": "yellow"}
 
 
 def plot_trace(path, save_path, y_lim, x_lim):
@@ -92,6 +93,7 @@ def plot_trace(path, save_path, y_lim, x_lim):
     # Mark epoch regions
     pairs = []
     running_pair = []
+    pairs_mode = []
     for _, row in data.iterrows():
       if row["event_type"] in ["execution_mode_change", "extended_epoch", "end_training"]:
         running_pair.append(row["time"])
@@ -99,13 +101,19 @@ def plot_trace(path, save_path, y_lim, x_lim):
           pairs.append(running_pair)
           running_pair = [row["time"]]
 
+        if len(running_pair) == 1:
+          pairs_mode.append(row["additional"])
     hitch = scale_hitches[idx]
-    color_sequence = epoch_colors[idx]
     times = []
     for i, pair in enumerate(pairs):
       t = int(pair[1] - pair[0])
       times.append(t)
-      plt.axvspan(pair[0], pair[1], alpha=0.3, color=color_sequence[min(i, len(color_sequence)-1)], hatch=hitch)
+      color = "white"
+      if i < len(pairs_mode) and pairs_mode[i] in epoch_colors_by_mode:
+        color = epoch_colors_by_mode[pairs_mode[i]]
+
+      plt.axvspan(pair[0], pair[1], alpha=0.3, color=color, hatch=hitch)
+      print(pair)
       # plt.text(pair[0] + t // 2 - 100, plt.ylim()[1] + 0.05, f"Time {t}s")
 
 
@@ -131,7 +139,7 @@ def plot_trace(path, save_path, y_lim, x_lim):
   else:
     plt.show()
 
-def print_epoch_times(path):
+def print_epoch_times(path, save_path=None):
   paths = {
     "job_1": os.path.join(path, JOB_1_LOG_NAME),
     "job_2": os.path.join(path, JOB_2_LOG_NAME)
@@ -150,12 +158,18 @@ def print_epoch_times(path):
       epoch_times[k] += [
         _get_timestamp(lines[i + 1]) - _get_timestamp(lines[i])
       ]
-
-  print("Printing epoch times in seconds*:")
+  lines = []
+  lines.append("Printing epoch times in seconds*:")
   for k, v in epoch_times.items():
-    print(f"{k}:", v)
-  print("\n*Note: if Cachew inserted an extended epoch for one of the jobs, "
+    lines.append(f"{k}: {v}")
+  lines.append("\n*Note: if Cachew inserted an extended epoch for one of the jobs, "
         "the respective epoch time will be artificially longer.")
+  full_text = "\n".join(lines)
+  print(full_text)
+  
+  if save_path is not None:
+    with open("{}_epoch_time.txt".format(save_path), 'w') as f:
+        f.write(full_text)
 
 
 def main(argv):
@@ -167,7 +181,7 @@ def main(argv):
   x_lim = FLAGS.x_lim
 
   plot_trace(path, save_path, y_lim, x_lim)
-  print_epoch_times(path)
+  print_epoch_times(path, save_path)
 
 
 if __name__ == '__main__':
