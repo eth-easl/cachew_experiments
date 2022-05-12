@@ -1,5 +1,5 @@
 filestore_cache: False #Whether to create a Filestore instance for the cache
-image: "tf_develop-dan:2.8.mt" # The docker image to use for the service
+image: "tf_develop-dan:2.8.mt.consistenthashing" # The docker image to use for the service
 vlog: 0 # The vlog level at the service
 num_workers: 1 # The number of workers in the service.
 glusterfs_ip: 10.128.0.14
