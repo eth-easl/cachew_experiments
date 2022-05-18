@@ -8,6 +8,31 @@ from matplotlib.patches import Patch
 
 ## First argument is directory with experiment results
 
+def find_first_decrease(A): 
+    curr_max = A[0]
+    second_largest = A[0]
+    for a in A[1:]:
+        if a>curr_max:
+            second_largest = curr_max
+            curr_max = a
+        elif a<curr_max:
+            # found first decrease
+            return second_largest
+
+    return A[-1] # never decreased, so last one
+
+
+# def test_find_first_decrease():
+#     assert(find_first_decrease([1,2,3]) == 3)
+#     assert(find_first_decrease([1]) == 1)
+#     assert(find_first_decrease([1,2,3,2]) == 2)
+#     assert(find_first_decrease([1,2,3,2]) == 2)
+#     assert(find_first_decrease([1,3,4,3]) == 3)
+#     assert(find_first_decrease([4,3,2,1]) == 4)
+#     assert(find_first_decrease([1,1,1,2,3,3,2]) == 2)
+#     assert(find_first_decrease([1,1,1,2,3,3,1]) == 2)
+# test_find_first_decrease()
+
 model_name = "resnet"
 cachew_color = '#ff8000'
 k8s_color = '#3333ff'
@@ -30,13 +55,9 @@ compute_c = []
 compute_s = []
 compute_e = []
 
-cachew_worker_count = pd.read_csv(cachew_scaling_decision_csv,  names=['workers']) \
-                        .iloc[:,-3:] \
-                        ["workers"].median() # type: ignore
+cachew_worker_count = find_first_decrease(pd.read_csv(cachew_scaling_decision_csv,  names=['workers'])["workers"].to_numpy()) # type: ignore
+kubernetes_hpa_worker_count = find_first_decrease(pd.read_csv(kubernetes_hpa_scaling_decision_csv,  names=['workers'])["workers"].to_numpy()) # type: ignore
 
-kubernetes_hpa_worker_count = pd.read_csv(kubernetes_hpa_scaling_decision_csv,  names=['workers']) \
-                        .iloc[:,-3:] \
-                        ["workers"].median() # type: ignore
 print(cachew_worker_count)
 print(kubernetes_hpa_worker_count)
 
