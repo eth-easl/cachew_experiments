@@ -91,16 +91,16 @@ def main(argv):
     compute_std = 1000 * df_compute["std"].values[:] / (num_rows)
     cache_std = 1000 * df_cache["std"].values[:] / (num_rows)
     source_cache_std = 1000 * df_source_cache["std"].values[:] / (num_rows)
-
-    cachew_times = \
-        df_decision["cache"].mul(cache_times) + \
-        df_decision["compute"].mul(compute_times) + \
-        df_decision["source"].mul(source_cache_times) if "cache" in df_decision else []
-
-    cachew_std = \
-        df_decision["cache"].mul(cache_std) + \
-        df_decision["compute"].mul(compute_std) + \
-        df_decision["source"].mul(source_cache_std) if "cache" in df_decision else []
+    
+    zero = np.repeat(0, len(cache_times))
+    cachew_times = np.repeat(0.0, len(cache_times))
+    
+    for dec,times in zip(["cache", "compute", "source"], [cache_times, compute_times, source_cache_times]):
+        if dec in df_decision:
+            if not len(cachew_times) == len(df_decision[dec]) and len(cachew_times) == len(times):
+                print("WARNING: the dimensions for the vectors describing the caching decisions do not match. Please report contents of the cachew_decision.csv.")
+                continue
+            cachew_times += df_decision[dec].mul(times)
 
     plt.rcParams.update({'font.size': 18})
     plt.rcParams.update({'figure.figsize':(10, 4)}) 
