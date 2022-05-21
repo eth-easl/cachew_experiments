@@ -93,7 +93,7 @@ def main(argv):
     source_cache_std = 1000 * df_source_cache["std"].values[:] / (num_rows)
     
     zero = np.repeat(0, len(cache_times))
-    cachew_times = np.repeat(0, len(cache_times))
+    cachew_times = np.repeat(0.0, len(cache_times))
     
     for dec,times in zip(["cache", "compute", "source"], [cache_times, compute_times, source_cache_times]):
         if dec in df_decision:
