@@ -28,8 +28,9 @@ echo "Done"
 gsutil cp gs://cachew-builds/tensorflow-2.8.0-cp39-cp39-linux_x86_64.whl ${HOME}
 python -m pip install --force-reinstall ${HOME}/tensorflow-2.8.0-cp39-cp39-linux_x86_64.whl
 
-# Create a bucket for the state store
-gsutil mb gs://${USER}-kubernetes-state
+# Create a bucket for the state store if it doesn't exist
+gsutil ls -b gs://tfdata-kops-state-otmraz || gsutil mb gs://tfdata-kops-state-otmraz
+
 
 # Get the repositories
 #git clone https://github.com/eth-easl/cachew_experiments.git && cd cachew_experiments
