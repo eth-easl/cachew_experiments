@@ -34,7 +34,7 @@ gsutil ls -b gs://tfdata-kops-state-otmraz || gsutil mb gs://tfdata-kops-state-o
 
 # Get the repositories
 #git clone https://github.com/eth-easl/cachew_experiments.git && cd cachew_experiments
-git clone --single-branch --branch otmraz_exp https://github.com/eth-easl/cachew_experiments.git
+git clone --single-branch --branch otmraz-exp https://github.com/eth-easl/cachew_experiments.git
 
 # Modify the relevant elements of the scripts
 replace_relevant_entries() {
