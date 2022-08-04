@@ -4,7 +4,7 @@
 name=${1:-""}
 gpu_count=${2:-0}
 machine_type=${3:-"n1-standard-8"}
-project=${4:-"cachew-artifact-eval"}
+project=${4:-"tfdata-service"}
 
 # Define some utility functions
 function usage {
@@ -41,7 +41,7 @@ gcloud beta compute instances create ${name} \
   --shielded-vtpm \
   --shielded-integrity-monitoring \
   --reservation-affinity=any \
-  --source-machine-image=projects/cachew-artifact-eval/global/machineImages/atc-artifact-eval-v01 ${additional_parameters}
+  --source-machine-image=projects/tfdata-service/global/machineImages/atc-artifact-eval-v01 ${additional_parameters}
 
 # Check if the VM has been successfully deployed
 if [ $? -ne 0 ]; then

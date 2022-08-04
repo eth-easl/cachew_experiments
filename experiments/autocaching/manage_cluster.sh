@@ -41,13 +41,13 @@ programname=$0
 gluster_nodes=2
 num_kubernetes_nodes=1
 num_tfdata_workers=1
-nethz="dkluser"
+nethz="otmraz"
 region="us-central1"
 zone="us-central1-a"
 mnt="/mnt/disks/gluster_data"
 service_config_yaml="default_config.yaml"
 logfile="${programname}_log.txt"
-export KOPS_STATE_STORE=gs://easl-dbk-kubernetes-state
+export KOPS_STATE_STORE=gs://tfdata-kops-state-otmraz
 
 function usage {
     echo "usage: $programname [start/status/stop/restart_service]"

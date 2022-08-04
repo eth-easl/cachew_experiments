@@ -22,7 +22,7 @@ log_dumps_interval_ms: 1000 # Only valid if log_dumps is true.
 worker_heartbeat_interval_ms: 5000 # The heartbeat interval between worker and dispatcher, in ms.
 
 nightly: False
-nethz: "dkluser" # TODO update this!
+nethz: "otmraz" # TODO update this!
 checkpoint_dir: "./gluster/checkpoints" # TODO update this!
 checkpoint_freq_ms: 999000
 zone: "us-central1-a"

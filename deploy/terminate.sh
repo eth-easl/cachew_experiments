@@ -1,7 +1,7 @@
 #!/bin/bash
 
 vm_file_name=${1:-"instance.name"}
-project=${2:-"cachew-artifact-eval"}
+project=${2:-"tfdata-service"}
 
 # Define some utility functions
 function usage {

@@ -34,7 +34,7 @@ spec:
     anonymousAuth: false
   kubernetesApiAccess:
   - 0.0.0.0/0
-  kubernetesVersion: 1.18.9
+  kubernetesVersion: 1.19.7
   masterPublicName: api.{{ nethz }}-tfdata-service.k8s.local
   networking:
     weave: {}

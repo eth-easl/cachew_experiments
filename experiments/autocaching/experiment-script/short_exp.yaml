@@ -1,7 +1,7 @@
 experiment:
   meta:
     name: "caching_decision_inflate_2.5_b900_redo"
-    path_to_log: /home/dkluser/managecluster/experiment_out
+    path_to_log: /home/otomr/managecluster/experiment_out
     gluster_conf:
     kubernetes:
       dispatcher: "n2-16"
@@ -29,9 +29,9 @@ experiment:
     params:
       data_path: "gs://tfdata-imagenet-dada/tfrecords/train" #"./gluster/data/train/"
       batch_size: 900
-      num_files_to_read: 10
+      num_files_to_read: 10 # Edit
       sleep_time_msec: 
-      - 400
+      - 400 # Edit
   deployment:
     type: "kubernetes-service"
     params:
@@ -61,7 +61,7 @@ experiment:
       image: "tf_develop:tf28"
       worker_heartbeat_interval_ms: 5000
       nightly: False
-      nethz: "dkluser"
+      nethz: "otmraz"
       zone: "us-central1-a"
       region: "us-central1"
       glusterfs_ip: "10.128.0.95"

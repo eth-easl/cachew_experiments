@@ -32,7 +32,8 @@ python -m pip install --force-reinstall ${HOME}/tensorflow-2.8.0-cp39-cp39-linux
 gsutil mb gs://${USER}-kubernetes-state
 
 # Get the repositories
-git clone https://github.com/eth-easl/cachew_experiments.git && cd cachew_experiments
+#git clone https://github.com/eth-easl/cachew_experiments.git && cd cachew_experiments
+git clone --single-branch --branch otmraz_exp https://github.com/eth-easl/cachew_experiments.git
 
 # Modify the relevant elements of the scripts
 replace_relevant_entries() {
@@ -40,28 +41,28 @@ replace_relevant_entries() {
 
   # shell script
   {
-    sed "s|nethz=\"dkluser\"|nethz=\"${USER}\"|" -i ${file_path} > /dev/null
-    sed "s|export KOPS_STATE_STORE=gs://easl-dbk-kubernetes-state|export KOPS_STATE_STORE=gs://${USER}-kubernetes-state|" -i ${file_path}
+    sed "s|nethz=\"dkluser\"|nethz=\"otmraz\"|" -i ${file_path} > /dev/null
+    sed "s|export KOPS_STATE_STORE=gs://easl-dbk-kubernetes-state|export KOPS_STATE_STORE=gs://tfdata-kops-state-otmraz|" -i ${file_path}
 
     # for the python files
 #    sed 's|"gs://tfdata-imagenet-dada/tfrecords/train"|"gs://tfdata-imagenet-atc-cachew/train"|' -i ${file_path}
     sed 's|"gs://tfdata-imagenet"|"gs://tfdata-imagenet-atc-cachew"|' -i ${file_path}
 
     # for the YAML file
-    sed "s|nethz: \"dkluser\"|nethz: \"${USER}\"|" -i ${file_path}
-    sed "s|project: tfdata-service|project: cachew-artifact-eval|" -i ${file_path}
+    sed "s|nethz: \"dkluser\"|nethz: \"otmraz\"|" -i ${file_path}
+    #sed "s|project: tfdata-service|project: cachew-artifact-eval|" -i ${file_path}
 
-    sed "s|tfdata-service/kubernetes-node-glusterfs-enabled|cachew-artifact-eval/kubernetes-node-glusterfs-enabled|" -i ${file_path}
+    #sed "s|tfdata-service/kubernetes-node-glusterfs-enabled|cachew-artifact-eval/kubernetes-node-glusterfs-enabled|" -i ${file_path}
   } >> logfile.txt 2>&1
 }
 
 replace_relevant_entries "$HOME/cachew_experiments/experiments/autocaching/manage_cluster.sh"
 replace_relevant_entries "$HOME/cachew_experiments/experiments/autocaching/templates/kubernetes_cluster.yaml"
-replace_relevant_entries "$HOME/cachew_experiments/experiments/autoscaling/manage_cluster/templates/kubernetes_cluster.yaml"
 replace_relevant_entries "$HOME/cachew_experiments/experiments/autocaching/default_config.yaml"
-replace_relevant_entries "$HOME/cachew_experiments/experiments/autoscaling/manage_cluster/manage_cluster.sh"
-replace_relevant_entries "$HOME/cachew_experiments/experiments/autocaching/manage_cluster/default_config.yaml"
-replace_relevant_entries "$HOME/cachew_experiments/experiments/multi-tenancy/manage_cluster/default_config.yaml"
 replace_relevant_entries "$HOME/cachew_experiments/experiments/autocaching/experiment-script/full_exp.yaml"
 replace_relevant_entries "$HOME/cachew_experiments/experiments/autocaching/experiment-script/short_exp.yaml"
+replace_relevant_entries "$HOME/cachew_experiments/experiments/autocaching/manage_cluster/default_config.yaml"
+replace_relevant_entries "$HOME/cachew_experiments/experiments/autoscaling/manage_cluster/templates/kubernetes_cluster.yaml"
+replace_relevant_entries "$HOME/cachew_experiments/experiments/autoscaling/manage_cluster/manage_cluster.sh"
 replace_relevant_entries "$HOME/cachew_experiments/experiments/autoscaling/resnet/run_imageNet.sh"
+replace_relevant_entries "$HOME/cachew_experiments/experiments/multi-tenancy/manage_cluster/default_config.yaml"

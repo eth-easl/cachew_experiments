@@ -139,6 +139,8 @@ def main(argv):
 
     range_keys, indices = get_range_indices(exp_cfg)
 
+    print("Here")
+
     if range_keys is None:
         range_keys = []
         indices = [[]]
@@ -150,6 +152,7 @@ def main(argv):
                              "std_all_epochs", "num_epochs", "num_repetitions"]:
         agg_results[key] = []
 
+    # Create directory structure
     path_to_log = exp_cfg.get("experiment/meta/path_to_log")
     timestamp = time.localtime()
     timestamp = time.strftime("%Y-%m-%d-%H-%M", timestamp)
@@ -158,6 +161,7 @@ def main(argv):
     system_utils.make_dir(path_to_log)
     exp_name = exp_cfg.get("experiment/meta/name")
 
+    # Store configs
     exp_cfg.write_to_disk(path_to_log, exp_name + "_config.yaml")
     #system_utils.start_disk_monitor(path_to_log + "/" + exp_name + "_iostat.json")
 

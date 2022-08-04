@@ -128,7 +128,7 @@ print("Training done!")
 
 The above input pipeline iterates through 100 integers. It increments each element, then sleeps for `400ms`. Finally, in order to execute this input pipeline in the service, it employs the `distribute` op, which forwards the processing request to the dispatcher. Note the use of the `mark` op. This is the `autocache` op. This serves as a potential cache location to Cachew. For more details, please have a look at the paper.
 
-In the model section of the code, we simply iterate through the dataset for two epochs. For each item in the dataset, we sleep for `200ms`. If Cachew is deployed in the atuoscaling mode, it should automatically increase the number of workers responsible with preprocessing the data to two, instead of one. This is done to ensure the client ingestion rate is met: $ 200ms = \frac{400ms}{2} $. 
+In the model section of the code, we simply iterate through the dataset for two epochs. For each item in the dataset, we sleep for `200ms`. If Cachew is deployed in the autoscaling mode, it should automatically increase the number of workers responsible with preprocessing the data to two, instead of one. This is done to ensure the client ingestion rate is met: $ 200ms = \frac{400ms}{2} $. 
 
 For further instructions on how to deploy a simple local cluster, see [this section](#running_a_pipeline).
 

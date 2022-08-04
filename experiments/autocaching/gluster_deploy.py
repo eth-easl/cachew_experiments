@@ -10,7 +10,7 @@ FLAGS = flags.FLAGS
 flags.DEFINE_string("zone", "us-central1-a", "The zone in which to deploy the service")
 flags.DEFINE_string("region", "us-central1", "The region in which to deploy the service")
 
-flags.DEFINE_string('nethz', "dkluser",
+flags.DEFINE_string('nethz', "otmraz",
                     "Your NETHZ. This is used to ensure there is no name collision between different clusters")
 flags.DEFINE_integer("num_nodes", 2, "The number of glusterfs nodes.")
 

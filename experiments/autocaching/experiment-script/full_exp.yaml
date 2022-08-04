@@ -1,7 +1,7 @@
 experiment:
   meta:
     name: "caching_decision_inflate_2.5_b900_redo"
-    path_to_log: /home/dkluser/cachew_artefact/fig7/experiment_out
+    path_to_log: /home/otomr/cachew_artefact/fig7/experiment_out
     gluster_conf:
     kubernetes:
       dispatcher: "n2-16"
@@ -68,7 +68,7 @@ experiment:
       image: "tf_develop:tf28"
       worker_heartbeat_interval_ms: 5000
       nightly: False
-      nethz: "dkluser"
+      nethz: "otomr"
       zone: "us-central1-a"
       region: "us-central1"
       glusterfs_ip: "10.128.0.95"
