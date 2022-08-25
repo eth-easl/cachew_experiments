@@ -47,7 +47,7 @@ local_tmp_dir: $out_dir
 service_deployment_dir: $(realpath ../)
 glusterfs_ip:  #not in use
 glusterfs_mount_path: /mnt/disks/gluster_data" > global_config.yaml
-  python run.py –global_config global_config.yaml --exp_config $experiment_yaml
+  python run.py --global_config global_config.yaml --exp_config $experiment_yaml
 }
 cd - || exit 1
 

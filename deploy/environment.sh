@@ -38,7 +38,7 @@ gsutil ls -b gs://tfdata-kops-state-otmraz || gsutil mb gs://tfdata-kops-state-o
 
 # Get the repositories
 #git clone https://github.com/eth-easl/cachew_experiments.git && cd cachew_experiments
-git clone --single-branch --branch otmraz-exp https://github.com/eth-easl/cachew_experiments.git
+git clone --single-branch --branch otmraz-exp https://github.com/eth-easl/cachew_experiments.git && cd cachew_experiments
 
 # Modify the relevant elements of the scripts
 replace_relevant_entries() {
@@ -50,8 +50,8 @@ replace_relevant_entries() {
     sed "s|export KOPS_STATE_STORE=gs://easl-dbk-kubernetes-state|export KOPS_STATE_STORE=gs://tfdata-kops-state-otmraz|" -i ${file_path}
 
     # for the python files
-#    sed 's|"gs://tfdata-imagenet-dada/tfrecords/train"|"gs://tfdata-imagenet-atc-cachew/train"|' -i ${file_path}
-    sed 's|"gs://tfdata-imagenet"|"gs://tfdata-imagenet-atc-cachew"|' -i ${file_path}
+    #sed 's|"gs://tfdata-imagenet-dada/tfrecords/train"|"gs://tfdata-imagenet-atc-cachew/train"|' -i ${file_path}
+    #sed 's|"gs://tfdata-imagenet"|"gs://tfdata-imagenet-atc-cachew"|' -i ${file_path}
 
     # for the YAML file
     sed "s|nethz: \"dkluser\"|nethz: \"otmraz\"|" -i ${file_path}
