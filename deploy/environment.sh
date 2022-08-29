@@ -30,6 +30,7 @@ python -m pip install --force-reinstall ${HOME}/tensorflow-2.8.0-cp39-cp39-linux
 
 # Fix protobuf & markupsafe installations
 pip install protobuf==3.20.0
+pip install werkzeug==2.1.1 # With 2.1.1 it should work (hopefully)
 pip install markupsafe==2.0.1 # This one gives an error for werkzeug (not sure if it's a problem)
 
 # Create a bucket for the state store if it doesn't exist

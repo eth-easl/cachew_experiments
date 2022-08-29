@@ -42,12 +42,12 @@ gluster_nodes=2
 num_kubernetes_nodes=1
 num_tfdata_workers=1
 nethz="otmraz"
-region="us-central1"
-zone="us-central1-a"
+region="europe-west4"
+zone="europe-west4-a"
 mnt="/mnt/disks/gluster_data"
 service_config_yaml="default_config.yaml"
 logfile="${programname}_log.txt"
-export KOPS_STATE_STORE=gs://tfdata-kops-state-otmraz
+export KOPS_STATE_STORE=gs://otmraz-tpu-test-europe
 
 function usage {
     echo "usage: $programname [start/status/stop/restart_service]"
