@@ -1,4 +1,4 @@
-filestore_cache: False #Whether to create a Filestore instance for the cache
+filestore_cache: False # Whether to create a Filestore instance for the cache
 image: "tf_develop:dkluser" # The docker image to use for the service
 vlog: 0 # The vlog level at the service
 num_workers: 1 # The number of workers in the service.

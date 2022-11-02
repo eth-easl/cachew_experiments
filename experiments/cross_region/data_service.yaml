@@ -1,0 +1,78 @@
+
+
+kind: ReplicaSet
+apiVersion: apps/v1
+metadata:
+  name: data-service-dispatcher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: data-service-dispatcher
+  template:
+    metadata:
+      labels:
+        name: data-service-dispatcher
+    spec:
+      containers:
+      - name: tensorflow
+        image: tf_oto:lw
+        ports:
+        - containerPort: 31000
+        args:
+        - "--port=31000"
+        - "--is_dispatcher=true"
+---
+
+
+kind: ReplicaSet
+apiVersion: extensions/v1beta1
+metadata:
+  name: data-service-worker-0
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: data-service-worker-0
+  template:
+    metadata:
+      labels:
+        name: data-service-worker-0
+    spec:
+      containers:
+      - name: tensorflow
+        image: tf_oto:lw
+        ports:
+        - containerPort: 31000
+        args:
+        - "--port=31000"
+        - "--is_dispatcher=false"
+        - "--dispatcher_address=data-service-dispatcher:31000"
+        - "--worker_address=10.164.0.40:31000"
+---
+
+kind: ReplicaSet
+apiVersion: extensions/v1beta1
+metadata:
+  name: data-service-worker-1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: data-service-worker-1
+  template:
+    metadata:
+      labels:
+        name: data-service-worker-1
+    spec:
+      containers:
+      - name: tensorflow
+        image: tf_oto:lw
+        ports:
+        - containerPort: 31000
+        args:
+        - "--port=31000"
+        - "--is_dispatcher=false"
+        - "--dispatcher_address=data-service-dispatcher:31000"
+        - "--worker_address=10.164.0.41:31000"
+---

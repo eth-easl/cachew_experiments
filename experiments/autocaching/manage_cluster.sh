@@ -38,7 +38,7 @@ echo_failure() {
 }
 
 programname=$0
-gluster_nodes=2
+gluster_nodes=1
 num_kubernetes_nodes=1
 num_tfdata_workers=1
 nethz="otmraz"

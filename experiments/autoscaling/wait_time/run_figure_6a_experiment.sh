@@ -132,7 +132,6 @@ function run_many {(
   current_dir=$( pwd )
   cd ${service_loc}
 
-
   # Start the experiments
   for i in "${scale[@]}"; do
     start_cluster "${i}" "${cache_policy}" 2

@@ -1,0 +1,55 @@
+{% set ip_mapping = {
+"data-service-worker-0": "10.164.0.40",
+"data-service-worker-1": "10.164.0.41"} %}
+
+kind: ReplicaSet
+apiVersion: apps/v1
+metadata:
+  name: data-service-dispatcher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: data-service-dispatcher
+  template:
+    metadata:
+      labels:
+        name: data-service-dispatcher
+    spec:
+      containers:
+      - name: tensorflow
+        image: {{ image }}
+        ports:
+        - containerPort: {{ port }}
+        args:
+        - "--port={{ port }}"
+        - "--is_dispatcher=true"
+---
+
+{% for worker_name, worker_ip in ip_mapping.items() %}
+kind: ReplicaSet
+apiVersion: extensions/v1beta1
+metadata:
+  name: {{ worker_name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: {{ worker_name }}
+  template:
+    metadata:
+      labels:
+        name: {{ worker_name }}
+    spec:
+      containers:
+      - name: tensorflow
+        image: {{ image }}
+        ports:
+        - containerPort: {{ port }}
+        args:
+        - "--port={{ port }}"
+        - "--is_dispatcher=false"
+        - "--dispatcher_address=data-service-dispatcher:{{ port }}"
+        - "--worker_address={{ worker_ip }}:{{ port }}"
+---
+{% endfor %}
