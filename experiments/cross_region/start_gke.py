@@ -60,21 +60,23 @@ def create_service_interfaces_and_yaml():
     get_exitcode_stdout_stderr(cmd)
     print("Data service interfaces created")
 
-def ip_missing(str):
-    if '''""''' in str:
-        return True
-    else:
-        return False
+def ip_missing(worker_list):
+    for w in worker_list:
+        if w[-1] == ':': # Otherwise the IP would be after ':'
+            return True
+    return False
 
 def get_worker_ips():
-    cmd = '''kubectl get services -o=jsonpath='{"\n"}{range .items[*]}"{.metadata.name}": "{.status.loadBalancer.ingress[*].ip}",{"\n"}{end}{"\n"}' | grep data-service-worker'''
+    cmd = "kubectl get services -o=jsonpath='{\"\\n\"}{range .items[*]}{.metadata.name}:{.status.loadBalancer.ingress[*].ip}{\"\\n\"}{end}{\"\\n\"}'"
     not_ready = True
     exitcode, out, err = get_exitcode_stdout_stderr(cmd)
     while(not_ready):
         time.sleep(1)
         exitcode, out, err = get_exitcode_stdout_stderr(cmd)
-        not_ready = ip_missing(cmd)
-
+        out_str = str(out)
+        out_str = out_str.split('\\n')
+        out_str = [x for x in out_str if 'data-service-worker' in x]
+        not_ready = ip_missing(out_str)
     return out
 
 def launch_cachew_servers():
