@@ -1,5 +1,4 @@
 from __future__ import print_function
-from msilib.schema import LaunchCondition
 from operator import truediv
 import subprocess as sp
 import os
@@ -24,10 +23,10 @@ flags.DEFINE_string('cluster_name', 'otmraz-gke', 'GKE cluster service name')
 flags.DEFINE_string('zone', 'europe-west4-a', 'GKE cluster service name')
 
 def render_jinja_template(file):
-    if len(sys.argv) != 2:
-        print("usage: {} [template-file]".format(sys.argv[0]), file=sys.stderr)
-        sys.exit(1)
-    with open(sys.argv[1], "r") as f:
+    #if len(sys.argv) != 2:
+    #    print("usage: {} [template-file]".format(sys.argv[0]), file=sys.stderr)
+    #    sys.exit(1)
+    with open(file, "r") as f:
         print(jinja2.Template(f.read()).render())
 
 def get_exitcode_stdout_stderr(cmd):
@@ -35,7 +34,6 @@ def get_exitcode_stdout_stderr(cmd):
     Execute the external command and get its exitcode, stdout and stderr.
     """
     args = shlex.split(cmd)
-
     proc = Popen(args, stdout=PIPE, stderr=PIPE)
     proc.wait()
     out, err = proc.communicate()
@@ -53,9 +51,12 @@ def start_gke():
     print("GKE cluster up")
 
 def create_service_interfaces_and_yaml():
-    ######## TODO: ADD Code from https://github.com/tensorflow/ecosystem/tree/master/data_service
-    #cmd = "python3 ../render_template.py data_service_interfaces.yaml.jinja | kubectl apply -f -"
-    cmd = "kubectl apply -f -"
+    print("Preparing interfaces & yaml")
+    with open('templates/data_service_interfaces.yaml.jinja', "r") as f:
+        template = jinja2.Template(f.read()).render()
+    with open("data_service_interfaces.yaml", "w") as f:
+        f.write(template)
+    cmd = "kubectl apply -f data_service_interfaces.yaml"
     get_exitcode_stdout_stderr(cmd)
     print("Data service interfaces created")
 
@@ -97,7 +98,7 @@ def launch_cachew_servers():
         f.write(rendered)
 
     # Actual server launch
-    cmd='''kubectl apply -f -'''
+    cmd='''kubectl apply -f data_service.yaml'''
     get_exitcode_stdout_stderr(cmd)
 
     print("Launched Cachew service")
@@ -105,7 +106,7 @@ def launch_cachew_servers():
 def stop_service():
     print("Stopping services")
     c, out, err = get_exitcode_stdout_stderr("kubectl get services")
-    
+
     names = []
     
     for line in out.decode('ascii').split("\n"):
@@ -117,7 +118,7 @@ def stop_service():
     for name in names:
         get_exitcode_stdout_stderr("kubectl delete rs " + name)
         get_exitcode_stdout_stderr("kubectl delete service " + name)
-        
+
     print("Stopped services")
 
 def stop_gke():
