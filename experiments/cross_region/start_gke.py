@@ -18,7 +18,7 @@ flags.DEFINE_boolean('restart', False, 'restarts the tf.data service.')
 flags.DEFINE_boolean('stop_service', False, 'stops the service only')
 flags.DEFINE_string('image', 'tf_oto:lw', 'specifies the docker image to use for the service')
 flags.DEFINE_string('vlog', '0', 'TF_CPP_MAX_VLOG_LEVEL level')
-flags.DEFINE_integer('num_workers', 15, 'Specifies the number of worker nodes to spawn')
+flags.DEFINE_integer('num_workers', 2, 'Specifies the number of worker nodes to spawn')
 flags.DEFINE_string('cluster_name', 'otmraz-gke', 'GKE cluster service name')
 flags.DEFINE_string('zone', 'europe-west4-a', 'GKE cluster service name')
 
@@ -42,7 +42,7 @@ def get_exitcode_stdout_stderr(cmd):
     return exitcode, out, err
    
 def start_gke():
-    print("Starting kubernetes cluster with GKE (this can take some time)...")
+    print("Starting kubernetes cluster with GKE (this can take some time) ...")
 
     command = "gcloud container clusters create {0} --zone {1} \
  		--scopes=cloud-platform --enable-ip-alias --num-nodes={2} \
@@ -51,7 +51,7 @@ def start_gke():
     print("GKE cluster up")
 
 def create_service_interfaces_and_yaml():
-    print("Preparing interfaces & yaml")
+    print("Preparing interfaces & yaml ...")
     with open('templates/data_service_interfaces.yaml.jinja', "r") as f:
         template = jinja2.Template(f.read()).render()
     with open("data_service_interfaces.yaml", "w") as f:
@@ -78,6 +78,7 @@ def get_worker_ips():
     return out
 
 def launch_cachew_servers():
+    print("Launching Cachew Service ...")
     worker_ips = get_worker_ips()
 
     with open("templates/data_service.yaml.jinja", "r") as f:
@@ -104,7 +105,7 @@ def launch_cachew_servers():
     print("Launched Cachew service")
 
 def stop_service():
-    print("Stopping services")
+    print("Stopping services ...")
     c, out, err = get_exitcode_stdout_stderr("kubectl get services")
 
     names = []
