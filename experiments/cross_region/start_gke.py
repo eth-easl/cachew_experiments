@@ -40,7 +40,7 @@ def get_exitcode_stdout_stderr(cmd):
     exitcode = proc.returncode
     #
     return exitcode, out, err
-   
+
 def start_gke():
     print("Starting kubernetes cluster with GKE (this can take some time) ...")
 
@@ -126,7 +126,7 @@ def stop_service():
 
 def stop_gke():
     print("Stopping GKE cluster")
-    command = "gcloud container clusters delete {0} --zone {1}".format(FLAGS.cluster_name, FLAGS.zone) 
+    command = "gcloud -q container clusters delete {0} --zone {1}".format(FLAGS.cluster_name, FLAGS.zone) 
     get_exitcode_stdout_stderr(command)
     print("Stopped GKE cluster")
 
@@ -146,6 +146,4 @@ def main(argv):
 
 if __name__ == '__main__':
     app.run(main)
-
-
 
