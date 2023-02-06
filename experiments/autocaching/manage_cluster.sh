@@ -39,8 +39,8 @@ echo_failure() {
 
 programname=$0
 gluster_nodes=1
-num_kubernetes_nodes=1
-num_tfdata_workers=1
+num_kubernetes_nodes=10
+num_tfdata_workers=10
 nethz="otmraz"
 region="europe-west4"
 zone="europe-west4-a"
