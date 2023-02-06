@@ -1,11 +1,11 @@
 filestore_cache: False # Whether to create a Filestore instance for the cache
-image: "tf_oto:lw" # The docker image to use for the service
+image: "tf_oto:ao" # The docker image to use for the service
 vlog: 0 # The vlog level at the service
 num_workers: 1 # The number of workers in the service.
 glusterfs_ip: 10.128.0.14
 
 # Used for the dispatcher:
-scaling_policy: 2
+scaling_policy: 3
 cache_policy: 2
 cache_format: 2 # 2==tfrecords, 1==arrow, 0==arrow_bis.
 cache_compression: 1 # 1==no compression
