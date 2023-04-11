@@ -11,6 +11,12 @@ cache_format: 2 # 2==tfrecords, 1==arrow, 0==arrow_bis.
 cache_compression: 1 # 1==no compression
 cache_ops_parallelism: 8 # number of threads for reader and writers.
 cache_path: "./gluster/cache"
+order_policy: 0
+optimize_cost: False
+scaling_threshold_up: 0.03
+client_cost: 4.96
+worker_cost: 0.427319
+batches_per_decision: 600
 # Specifies whether to enable log dumps at dispatcher.
 # Will automatically set the log_dir param of the dispatcher and copy logs into meta/path_to_logs/..
 # Only valid for local-service and kubernetes-service deployment.
