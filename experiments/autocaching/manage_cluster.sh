@@ -233,15 +233,28 @@ stop_kubernetes () {
 }
 
 start_kubernetes () {
-  echo -n "Generating kubernetes config yaml"
-  if jinja2 templates/kubernetes_cluster.yaml \
-    -D "nethz=$nethz" \
-    -D "zone=$zone" \
-    -D "region=$region" \
-    -D "num_nodes=$num_kubernetes_nodes" > ./tmp/kubernetes_cluster.yaml < /dev/null; then
-    echo_success
+  if $num_kubernetes_nodes==0 > /dev/null 2>&1; then
+    echo -n "Generating kubernetes config yaml (no workers)"
+    if jinja2 templates/kubernetes_cluster.yaml \
+      -D "nethz=$nethz" \
+      -D "zone=$zone" \
+      -D "region=$region" > ./tmp/kubernetes_cluster_no_workers.yaml < /dev/null; then
+      echo_success
+    else
+      echo_failure
+    fi
+
   else
-    echo_failure
+    echo -n "Generating kubernetes config yaml"
+    if jinja2 templates/kubernetes_cluster.yaml \
+      -D "nethz=$nethz" \
+      -D "zone=$zone" \
+      -D "region=$region" \
+      -D "num_nodes=$num_kubernetes_nodes" > ./tmp/kubernetes_cluster.yaml < /dev/null; then
+      echo_success
+    else
+      echo_failure
+    fi
   fi
 
   echo -n "Starting kubernetes cluster"
@@ -257,9 +270,7 @@ start_kubernetes () {
     echo_failure
   fi
 
-
 }
-
 
 
 setup_kubernetes_nodes () {
@@ -383,8 +394,6 @@ deploy_tfdata_service () {
   done
   echo_success
 }
-
-
 
 stop_tfdata_service () {
   services=$(kubectl get services | grep data-service | awk '{print $1}')
