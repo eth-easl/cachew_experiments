@@ -388,7 +388,7 @@ deploy_tfdata_service () {
   } >> tmp/data_service_inp.yaml
 
   if [ $num_kubernetes_nodes -eq 0 ] ; then
-    jinja2 ./templates/data_service_no_service.yaml ./tmp/data_service_inp.yaml > ./tmp/data_service.yaml < /dev/null
+    jinja2 ./templates/data_service_no_worker.yaml ./tmp/data_service_inp.yaml > ./tmp/data_service.yaml < /dev/null
     if kubectl apply -f tmp/data_service.yaml >> "$logfile" 2>&1; then
       echo_success
     else
