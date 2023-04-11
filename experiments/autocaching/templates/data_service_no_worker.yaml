@@ -1,0 +1,54 @@
+{#%- set image = "gcr.io/tfdata-service/tf_custom:latest" -%#}
+{#%- set port = 5050 -%#}
+
+kind: ReplicaSet
+apiVersion: apps/v1
+metadata:
+  name: data-service-dispatcher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: data-service-dispatcher
+  template:
+    metadata:
+      labels:
+        name: data-service-dispatcher
+    spec:
+      nodeSelector:
+        cachew.role: dispatcher
+      containers:
+      - name: tensorflow
+        image: {{ docker_image }}
+        imagePullPolicy: Always
+        ports:
+        - containerPort: {{ disp_port }}
+        args:
+        - "--port={{ disp_port }}"
+        - "--is_dispatcher=true"
+        - "--scaling_policy={{ scaling_policy }}"
+        - "--cache_policy={{ cache_policy }}"
+        - "--cache_format={{ cache_format }}"
+        - "--cache_compression={{ cache_compression }}"
+        - "--cache_ops_parallelism={{ cache_ops_parallelism }}"
+        - "--log_dir={{ log_dir }}"
+        - "--log_dumps_interval_ms={{ log_dumps_interval_ms }}"
+        - "--vlog={{ vlog }}"
+        - "--cache_path={{ cache_path }}"
+
+        env:
+        - name: TF_CPP_MIN_LOG_LEVEL
+          value: "0"
+        - name: TF_CPP_MAX_VLOG_LEVEL
+          value: "{{ vlog }}"
+        volumeMounts:
+        - mountPath: /usr/src/app/gluster
+          name: gluster
+      volumes:
+      - name: gluster
+        glusterfs:
+          endpoints: glusterfs-cluster
+          path: tfdata_cache
+          readOnly: false
+---
+

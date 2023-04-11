@@ -233,7 +233,7 @@ stop_kubernetes () {
 }
 
 start_kubernetes () {
-  if $num_kubernetes_nodes==0 > /dev/null 2>&1; then
+  if $num_kubernetes_nodes -eq 0 > /dev/null 2>&1; then
     echo -n "Generating kubernetes config yaml (no workers)"
     if jinja2 templates/kubernetes_cluster.yaml \
       -D "nethz=$nethz" \
@@ -315,18 +315,28 @@ tfdata_service_pods_running () {
 }
 
 deploy_tfdata_service () {
-  echo -n "Creating services and interfaces..."
   echo $'disp_port: 31000\nworkers:' > tmp/inp.yaml
   for (( i=0; i<num_tfdata_workers; i++ )); do
     echo "- index: $i" >> tmp/inp.yaml
     echo "  port: $(( 31001 + i))" >> tmp/inp.yaml
   done
 
-  if jinja2 ./templates/data_service_interfaces.yaml ./tmp/inp.yaml > ./tmp/data_service_interfaces.yaml < /dev/null && \
-    kubectl apply -f tmp/data_service_interfaces.yaml >> "$logfile" 2>&1; then
-    echo_success
+  if $num_kubernetes_nodes -eq 0 > /dev/null 2>&1; then
+    echo -n "Creating services and interfaces (no worker)..."
+    if jinja2 ./templates/data_service_interfaces_no_worker.yaml ./tmp/inp.yaml > ./tmp/data_service_interfaces.yaml < /dev/null && \
+      kubectl apply -f tmp/data_service_interfaces.yaml >> "$logfile" 2>&1; then
+      echo_success
+    else
+      echo_failure
+    fi
   else
-    echo_failure
+    echo -n "Creating services and interfaces..."
+    if jinja2 ./templates/data_service_interfaces.yaml ./tmp/inp.yaml > ./tmp/data_service_interfaces.yaml < /dev/null && \
+      kubectl apply -f tmp/data_service_interfaces.yaml >> "$logfile" 2>&1; then
+      echo_success
+    else
+      echo_failure
+    fi
   fi
 
   echo -n "Waiting for service to come up..."
@@ -375,11 +385,20 @@ deploy_tfdata_service () {
     echo "docker_image: gcr.io/tfdata-service/$(yq -r ".image" $service_config_yaml)"
   } >> tmp/data_service_inp.yaml
 
-  jinja2 ./templates/data_service.yaml ./tmp/data_service_inp.yaml > ./tmp/data_service.yaml < /dev/null
-  if kubectl apply -f tmp/data_service.yaml >> "$logfile" 2>&1; then
-    echo_success
+  if $num_kubernetes_nodes -eq 0 > /dev/null 2>&1; then
+    jinja2 ./templates/data_service_no_service.yaml ./tmp/data_service_inp.yaml > ./tmp/data_service.yaml < /dev/null
+    if kubectl apply -f tmp/data_service.yaml >> "$logfile" 2>&1; then
+      echo_success
+    else
+      echo_failure
+    fi
   else
-    echo_failure
+    jinja2 ./templates/data_service.yaml ./tmp/data_service_inp.yaml > ./tmp/data_service.yaml < /dev/null
+    if kubectl apply -f tmp/data_service.yaml >> "$logfile" 2>&1; then
+      echo_success
+    else
+      echo_failure
+    fi
   fi
 
   echo -n "Waiting for service to come up..."
