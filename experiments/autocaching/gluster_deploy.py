@@ -17,6 +17,12 @@ flags.DEFINE_integer("num_nodes", 2, "The number of glusterfs nodes.")
 flags.DEFINE_boolean("create_cluster", False, "The script creates a new cluster from scratch or increases the number of gluster nodes")
 flags.DEFINE_boolean("delete_cluster", False, "The script deletes all VMs in the cluster.")
 
+def output_failure(exit_code, out, err):
+    print(f'exit code: {exit_code}')
+    print(f'OUT: {out}')
+    print('ERR:')
+    print(err)
+
 def execute_cmd(cmd):
     """
     Execute the external command and get its exitcode, stdout and stderr.
@@ -50,13 +56,13 @@ def create_and_setup_node(node_id):
     print("Creating VM for node " + node_name + "...")
     create_vm_cmd = \
         "gcloud compute instances create " + node_name + \
-        " --machine-type=n2-standard-2 --image-family=ubuntu-1804-lts --image-project=ubuntu-os-cloud " + \
+        " --machine-type=n2-standard-2 --image-family=ubuntu-2004-lts --image-project=ubuntu-os-cloud " + \
         "--local-ssd interface=nvme --local-ssd interface=nvme --zone=" + FLAGS.zone
     code, out, err = execute_cmd(create_vm_cmd)
     if code!=0:
         print("WARNING: non-zero exit status from create vm command ({}, {}, {})".format(code, out, err))
         sys.exit(code)
-    
+
     print("Waiting for VM to be up...")
     vm_up = False
     while not vm_up:
@@ -65,16 +71,27 @@ def create_and_setup_node(node_id):
             vm_up = True
 
     print("Installing gluster...")
-    install_gluster_cmd = "sudo add-apt-repository -y ppa:gluster/glusterfs-9 && sudo apt update -y " + \
-        "&& sudo apt install -y glusterfs-server && sudo systemctl enable glusterd"
-    execute_cmd("gcloud compute ssh --strict-host-key-checking=no --zone=" + FLAGS.zone + " " + node_name + " --command=\"" + install_gluster_cmd + "\" --quiet")
+    install_gluster_cmd = "sudo apt install software-properties-common -y && " + \
+        "curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add - && " + \
+        "sudo apt update -y && " + \
+        "sudo apt install -y glusterfs-server && " + \
+        "sudo systemctl enable glusterd"
+
+    code, out, err = execute_cmd("gcloud compute ssh --strict-host-key-checking=no --zone=" + FLAGS.zone + " " + node_name + " --command=\"" + install_gluster_cmd + "\" --quiet")
+    if code != 0:
+        print('Istallation of gluster failed!')
+        output_failure(code, out, err)
+        sys.exit(code)
 
     print("Formatting disks")
     format_disks_cmd = "sudo apt install mdadm -y --no-install-recommends && " + \
         "sudo mdadm --create /dev/md0 --level=0 --raid-devices=2 /dev/nvme0n1 /dev/nvme0n2 && " + \
         "sudo mkfs.xfs -f -i size=512 /dev/md0 && sudo mkdir -p /data/brick1/ && sudo mount /dev/md0 /data/brick1"
-
-    execute_cmd("gcloud compute ssh --strict-host-key-checking=no --zone=" + FLAGS.zone + " " + node_name + " --command=\"" + format_disks_cmd + "\" --quiet")
+    code, out, err = execute_cmd("gcloud compute ssh --strict-host-key-checking=no --zone=" + FLAGS.zone + " " + node_name + " --command=\"" + format_disks_cmd + "\" --quiet")
+    if code != 0:
+        print('Formatting disks failed!')
+        output_failure(code, out, err)
+        sys.exit(code)
 
     node_ip = get_node_ip(node_id)
 
@@ -125,6 +142,13 @@ def get_node_ip(node_id):
 
 def create_volume():
     node_name_0 = FLAGS.nethz + "-glusterfs-node-0"
+    # First restart the glusterd
+    restart_glusterd = "sudo systemctl restart glusterd"
+    code, out, err = execute_cmd("gcloud compute ssh --strict-host-key-checking=no --zone=" + FLAGS.zone + " " + node_name_0 + " --command=\"" + restart_glusterd + "\" --quiet")
+    if code != 0:
+        print("Restarting glusterd service failed!")
+        output_failure(code, out, err)
+        sys.exit(code)
 
     if FLAGS.num_nodes > 1:
         probe_peers_cmd = "true "
@@ -141,6 +165,7 @@ def create_volume():
 
     create_volume_cmd = create_volume_cmd + " && sudo gluster volume start tfdata_cache"
     code, out, err = execute_cmd("gcloud compute ssh --strict-host-key-checking=no --zone=" + FLAGS.zone + " " + node_name_0 + " --command=\"" + create_volume_cmd + "\" --quiet")
+    return code, out, err
 
 
 # Utils
@@ -169,9 +194,14 @@ def main(argv):
         if num_nodes == 0:
             print("Creating volume from scratch...")
             create_and_setup_nodes()
-            create_volume()
-            print("Volume created: first volume node is " + FLAGS.nethz +\
-                  "-glusterfs-node-0 with ip " +get_node_ip(0) + ".")
+            code, out, err = create_volume()
+            if code != 0: #unsuccessful:
+                print('Creation of volume failed!')
+                output_failure(code, out, err)
+                sys.exit(code)
+            else: # successful
+                print("Volume created: first volume node is " + FLAGS.nethz +\
+                    "-glusterfs-node-0 with ip " + get_node_ip(0) + ".")
         else:
             print("Growing existing cluster")
             for node_id in range(num_nodes, FLAGS.num_nodes):
